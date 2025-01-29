@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Ticket} from '../types';
 
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
@@ -13,7 +14,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const login = async (username: string, password: string) => {
-  const response = await api.post('/Login', { username, password });
+  const response = await api.post('/Users/Login', { username, password });
   return response.data;
 };
 
@@ -22,8 +23,8 @@ export const getTickets = async () => {
   return response.data;
 };
 
-export const searchTickets = async (id: string) => {
-  const response = await api.get(`/Tickets/${id}`);
+export const searchTickets = async (Number: string) => {
+  const response = await api.get(`/Tickets/GetTicketByNumber/${Number}`);
   return response.data;
 };
 
