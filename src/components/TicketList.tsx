@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Pencil, Trash2, Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets } from '../services/api';
 import { Ticket } from '../types';
 import TicketForm from './TicketForm';
+import Spinner from './Spinner';
 
 export default function TicketList() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [filters, setFilters] = useState({
     date: '',
     loteria: '',
@@ -19,11 +22,15 @@ export default function TicketList() {
   const isAdmin = localStorage.getItem('role') === '0';
 
   const loadTickets = async () => {
+    setIsLoading(true);
     try {
       const data = await getTickets();
       setTickets(data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to load tickets');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -33,45 +40,58 @@ export default function TicketList() {
 
   const handleSearch = async () => {
     if (!searchNumber.trim()) return;
+    setIsSearching(true);
     try {
       const data = await searchTickets(searchNumber);
       setTickets(data);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Search failed');
+    } finally {
+      setIsSearching(false);
     }
   };
 
   const handleCreate = async (ticketData: Omit<Ticket, 'id'>) => {
+    setIsLoading(true);
     try {
       await createTicket(ticketData);
       toast.success('Ticket created successfully');
       setShowForm(false);
       loadTickets();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to create ticket');
+      setIsLoading(false);
     }
   };
 
   const handleUpdate = async (ticketData: Omit<Ticket, 'id'>) => {
     if (!editingTicket) return;
+    setIsLoading(true);
     try {
       await updateTicket(editingTicket.id, ticketData);
       toast.success('Ticket updated successfully');
       setEditingTicket(null);
       loadTickets();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to update ticket');
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this ticket?')) return;
+    setIsLoading(true);
     try {
       await deleteTicket(id);
       toast.success('Ticket deleted successfully');
       loadTickets();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Failed to delete ticket');
+      setIsLoading(false);
     }
   };
 
@@ -91,7 +111,8 @@ export default function TicketList() {
           {isAdmin && (
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              disabled={isLoading}
+              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="h-4 w-4" />
               Add Ticket
@@ -107,14 +128,25 @@ export default function TicketList() {
               onChange={(e) => setSearchNumber(e.target.value)}
               placeholder="Search by number..."
               className="w-full px-4 py-2 border rounded-md"
+              disabled={isSearching}
             />
           </div>
           <button
             onClick={handleSearch}
-            className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200"
+            disabled={isSearching}
+            className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Search className="h-4 w-4" />
-            Search
+            {isSearching ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                Searching...
+              </>
+            ) : (
+              <>
+                <Search className="h-4 w-4" />
+                Search
+              </>
+            )}
           </button>
         </div>
 
@@ -124,6 +156,7 @@ export default function TicketList() {
             value={filters.date}
             onChange={(e) => setFilters({ ...filters, date: e.target.value })}
             className="px-4 py-2 border rounded-md"
+            disabled={isLoading}
           />
           <input
             type="text"
@@ -131,6 +164,7 @@ export default function TicketList() {
             onChange={(e) => setFilters({ ...filters, loteria: e.target.value })}
             placeholder="Filter by Loteria..."
             className="px-4 py-2 border rounded-md"
+            disabled={isLoading}
           />
           <input
             type="text"
@@ -138,64 +172,73 @@ export default function TicketList() {
             onChange={(e) => setFilters({ ...filters, jornada: e.target.value })}
             placeholder="Filter by Jornada..."
             className="px-4 py-2 border rounded-md"
+            disabled={isLoading}
           />
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Number
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Loteria
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Jornada
-              </th>
-              {isAdmin && (
+        {isLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <Spinner className="h-8 w-8 text-indigo-600" />
+          </div>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  Number
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredTickets.map((ticket) => (
-              <tr key={ticket.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {format(new Date(ticket.date), 'dd/MM/yyyy')}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Loteria
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Jornada
+                </th>
                 {isAdmin && (
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setEditingTicket(ticket)}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        <Pencil className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(ticket.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredTickets.map((ticket) => (
+                <tr key={ticket.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {format(new Date(ticket.date), 'dd/MM/yyyy')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
+                  {isAdmin && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setEditingTicket(ticket)}
+                          className="text-indigo-600 hover:text-indigo-900"
+                          disabled={isLoading}
+                        >
+                          <Pencil className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(ticket.id)}
+                          className="text-red-600 hover:text-red-900"
+                          disabled={isLoading}
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {(showForm || editingTicket) && (
