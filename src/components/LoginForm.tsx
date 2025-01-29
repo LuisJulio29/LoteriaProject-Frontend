@@ -3,16 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { KeyRound, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { login } from '../services/api';
+import Spinner from './Spinner';
 
 export default function LoginForm() {
-  const [username, setUsername] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await login(username, password);
+      const response = await login(userName, password);
       if (response.isSuccess) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.roles.toString());
@@ -21,8 +24,11 @@ export default function LoginForm() {
       } else {
         toast.error('Invalid credentials');
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,10 +45,11 @@ export default function LoginForm() {
               </div>
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -58,14 +65,23 @@ export default function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isLoading}
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            Login
+            {isLoading ? (
+              <>
+                <Spinner className="h-5 w-5 mr-2" />
+                Logging in...
+              </>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>
