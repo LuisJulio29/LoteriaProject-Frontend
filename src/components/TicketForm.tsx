@@ -42,8 +42,8 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-        <h3 className="text-lg font-semibold mb-4">
-          {initialData ? 'Edit Ticket' : 'Add New Ticket'}
+        <h3 className="text-lg font-semibold mb-4 text-center">
+          {initialData ? 'Editar Chance' : 'Añadir Nuevo Chance'}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -52,7 +52,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               type="text"
               value={formData.number}
               onChange={(e) => setFormData({ ...formData, number: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
               required
               disabled={isSubmitting}
             />
@@ -63,7 +63,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
               required
               disabled={isSubmitting}
             />
@@ -74,7 +74,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               type="text"
               value={formData.loteria}
               onChange={(e) => setFormData({ ...formData, loteria: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
               required
               disabled={isSubmitting}
             />
@@ -85,12 +85,12 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               type="text"
               value={formData.jornada}
               onChange={(e) => setFormData({ ...formData, jornada: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
               required
               disabled={isSubmitting}
             />
           </div>
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-center space-x-2 pt-4">
             <button
               type="button"
               onClick={onCancel}
