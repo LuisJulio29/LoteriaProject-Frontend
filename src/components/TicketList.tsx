@@ -104,7 +104,7 @@ export default function TicketList() {
   });
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-14">
       <div className="mb-6 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Tickets</h1>
@@ -115,7 +115,7 @@ export default function TicketList() {
               className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="h-4 w-4" />
-              Add Ticket
+              Añadir Chance
             </button>
           )}
         </div>
@@ -126,7 +126,7 @@ export default function TicketList() {
               type="text"
               value={searchNumber}
               onChange={(e) => setSearchNumber(e.target.value)}
-              placeholder="Search by number..."
+              placeholder="Buscar por Numero..."
               className="w-full px-4 py-2 border rounded-md"
               disabled={isSearching}
             />
@@ -139,12 +139,12 @@ export default function TicketList() {
             {isSearching ? (
               <>
                 <Spinner className="h-4 w-4" />
-                Searching...
+                Buscando...
               </>
             ) : (
               <>
                 <Search className="h-4 w-4" />
-                Search
+                Buscar
               </>
             )}
           </button>
@@ -162,7 +162,7 @@ export default function TicketList() {
             type="text"
             value={filters.loteria}
             onChange={(e) => setFilters({ ...filters, loteria: e.target.value })}
-            placeholder="Filter by Loteria..."
+            placeholder="Filtrar por Loteria..."
             className="px-4 py-2 border rounded-md"
             disabled={isLoading}
           />
@@ -170,7 +170,7 @@ export default function TicketList() {
             type="text"
             value={filters.jornada}
             onChange={(e) => setFilters({ ...filters, jornada: e.target.value })}
-            placeholder="Filter by Jornada..."
+            placeholder="Filtrar por Jornada..."
             className="px-4 py-2 border rounded-md"
             disabled={isLoading}
           />
@@ -187,10 +187,10 @@ export default function TicketList() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Number
+                  Numero
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  Fecha
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Loteria
@@ -200,7 +200,7 @@ export default function TicketList() {
                 </th>
                 {isAdmin && (
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Acciones
                   </th>
                 )}
               </tr>

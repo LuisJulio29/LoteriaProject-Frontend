@@ -47,7 +47,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Number</label>
+            <label className="block text-sm font-medium text-gray-700">Numero</label>
             <input
               type="text"
               value={formData.number}
@@ -58,7 +58,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <label className="block text-sm font-medium text-gray-700">Fecha</label>
             <input
               type="date"
               value={formData.date}
