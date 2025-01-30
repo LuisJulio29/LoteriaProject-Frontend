@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Pencil, Trash2, Plus, Search } from 'lucide-react';
+import { Pencil, Trash2, Plus, Search, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets } from '../services/api';
 import { Ticket } from '../types';
@@ -12,6 +12,7 @@ export default function TicketList() {
   const [showForm, setShowForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [filters, setFilters] = useState({
     date: '',
@@ -31,6 +32,20 @@ export default function TicketList() {
       toast.error('Failed to load tickets');
     } finally {
       setIsLoading(false);
+    }
+  };
+  const handleReload = async () => {
+    setIsReloading(true);
+    try {
+      const data = await getTickets();
+      setTickets(data);
+      setSearchNumber('');
+      toast.success('Tickets reloaded successfully');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error('Failed to reload tickets');
+    } finally {
+      setIsReloading(false);
     }
   };
 
@@ -121,34 +136,51 @@ export default function TicketList() {
         </div>
 
         <div className="flex gap-4 items-center">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={searchNumber}
-              onChange={(e) => setSearchNumber(e.target.value)}
-              placeholder="Buscar por Numero..."
-              className="w-full px-4 py-2 border rounded-md"
-              disabled={isSearching}
-            />
-          </div>
-          <button
-            onClick={handleSearch}
-            disabled={isSearching}
-            className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSearching ? (
-              <>
-                <Spinner className="h-4 w-4" />
-                Buscando...
-              </>
-            ) : (
-              <>
-                <Search className="h-4 w-4" />
-                Buscar
-              </>
-            )}
-          </button>
-        </div>
+  <button
+    onClick={handleReload}
+    disabled={isReloading || isSearching}
+    className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[60px] justify-center"
+  >
+    {isReloading ? (
+      <>
+        <Spinner className="h-4 w-4" />
+        Reloading...
+      </>
+    ) : (
+      <>
+        <RotateCw className="h-4 w-4" />
+        Reload
+      </>
+    )}
+  </button>
+  <div className="flex-1">
+    <input
+      type="text"
+      value={searchNumber}
+      onChange={(e) => setSearchNumber(e.target.value)}
+      placeholder="Buscar por Numero..."
+      className="w-full px-4 py-2 border rounded-md min-w-[160px]"
+      disabled={isSearching}
+    />
+  </div>
+  <button
+    onClick={handleSearch}
+    disabled={isSearching}
+    className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[60px] justify-center"
+  >
+    {isSearching ? (
+      <>
+        <Spinner className="h-4 w-4" />
+        Buscando...
+      </>
+    ) : (
+      <>
+        <Search className="h-4 w-4" />
+        Buscar
+      </>
+    )}
+  </button>
+</div>
 
         <div className="grid grid-cols-3 gap-4">
           <input
@@ -183,23 +215,23 @@ export default function TicketList() {
             <Spinner className="h-8 w-8 text-indigo-600" />
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 table-auto">
+            <thead className="bg-indigo-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
                   Numero
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
                   Fecha
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
                   Loteria
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
                   Jornada
                 </th>
                 {isAdmin && (
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
                     Acciones
                   </th>
                 )}
