@@ -34,12 +34,12 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+      <div className="bg-white p-10 rounded-lg shadow-md w-1/2 h-1/2">
+        <h2 className="text-2xl font-bold text-center mb-10">Iniciar Sesion</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Username</label>
-            <div className="mt-1 relative">
+            <label className="block text-sm font-medium text-gray-700">Usuario</label>
+            <div className="mt-3 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-5 w-5 text-gray-400" />
               </div>
@@ -47,15 +47,15 @@ export default function LoginForm() {
                 type="text"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 py-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
                 required
                 disabled={isLoading}
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <div className="mt-1 relative">
+            <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+            <div className="mt-3 relative mb-10">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <KeyRound className="h-5 w-5 text-gray-400" />
               </div>
@@ -63,7 +63,7 @@ export default function LoginForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="pl-10 py-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
                 required
                 disabled={isLoading}
               />
@@ -77,7 +77,7 @@ export default function LoginForm() {
             {isLoading ? (
               <>
                 <Spinner className="h-5 w-5 mr-2" />
-                Logging in...
+                Logeando...
               </>
             ) : (
               'Login'
