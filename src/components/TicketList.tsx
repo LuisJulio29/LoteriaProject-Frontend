@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Pencil, Trash2, Plus, Search, RotateCw } from 'lucide-react';
+import { Pencil, Trash2, Plus, Search, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets } from '../services/api';
 import { Ticket } from '../types';
 import TicketForm from './TicketForm';
 import Spinner from './Spinner';
+import React from 'react';
 
 export default function TicketList() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -20,6 +21,8 @@ export default function TicketList() {
     jornada: '',
   });
   const [searchNumber, setSearchNumber] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
   const isAdmin = localStorage.getItem('role') === '0';
 
   const loadTickets = async () => {
@@ -117,6 +120,15 @@ export default function TicketList() {
       (!filters.jornada || ticket.jornada.toLowerCase().includes(filters.jornada.toLowerCase()))
     );
   });
+   // Pagination calculations
+   const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+   const startIndex = (currentPage - 1) * itemsPerPage;
+   const endIndex = startIndex + itemsPerPage;
+   const currentTickets = filteredTickets.slice(startIndex, endIndex);
+ 
+   const handlePageChange = (page: number) => {
+     setCurrentPage(page);
+   };
 
   return (
     <div className="container mx-auto p-14">
@@ -215,64 +227,145 @@ export default function TicketList() {
             <Spinner className="h-8 w-8 text-indigo-600" />
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200 table-auto">
-            <thead className="bg-indigo-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                  Numero
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                  Fecha
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                  Loteria
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                  Jornada
-                </th>
-                {isAdmin && (
+          <>
+            <table className="min-w-full divide-y divide-gray-200 table-auto">
+              <thead className="bg-indigo-50">
+                <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                    Acciones
+                    Numero
                   </th>
-                )}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredTickets.map((ticket) => (
-                <tr key={ticket.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format(new Date(ticket.date), 'dd/MM/yyyy')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                    Fecha
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                    Loteria
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                    Jornada
+                  </th>
                   {isAdmin && (
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => setEditingTicket(ticket)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                          disabled={isLoading}
-                        >
-                          <Pencil className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(ticket.id)}
-                          className="text-red-600 hover:text-red-900"
-                          disabled={isLoading}
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                      Acciones
+                    </th>
                   )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentTickets.map((ticket) => (
+                  <tr key={ticket.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {format(new Date(ticket.date), 'dd/MM/yyyy')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
+                    {isAdmin && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => setEditingTicket(ticket)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            disabled={isLoading}
+                          >
+                            <Pencil className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(ticket.id)}
+                            className="text-red-600 hover:text-red-900"
+                            disabled={isLoading}
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Pagination */}
+            <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+              <div className="flex-1 flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">{startIndex + 1}</span>{' '}
+                    hasta{' '}
+                    <span className="font-medium">
+                      {Math.min(endIndex, filteredTickets.length)}
+                    </span>{' '}
+                    of{' '}
+                    <span className="font-medium">{filteredTickets.length}</span>{' '}
+                    results
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </button>
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => {
+                        // Show first page, last page, current page, and pages around current page
+                        return (
+                          page === 1 ||
+                          page === totalPages ||
+                          Math.abs(page - currentPage) <= 1
+                        );
+                      })
+                      .map((page, index, array) => {
+                        // Add ellipsis between non-consecutive pages
+                        if (index > 0 && page - array[index - 1] > 1) {
+                          return (
+                            <React.Fragment key={`ellipsis-${page}`}>
+                              <span className="px-3 py-1 text-gray-500">...</span>
+                              <button
+                                onClick={() => handlePageChange(page)}
+                                className={`px-3 py-1 rounded-md ${
+                                  currentPage === page
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            </React.Fragment>
+                          );
+                        }
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`px-3 py-1 rounded-md ${
+                              currentPage === page
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                  </div>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
-
       {(showForm || editingTicket) && (
         <TicketForm
           onSubmit={editingTicket ? handleUpdate : handleCreate}
