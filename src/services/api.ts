@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Ticket} from '../types';
+import { Pattern, Ticket } from '../types';
 
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
@@ -13,8 +13,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const login = async (username: string, password: string) => {
-  const response = await api.post('/Users/Login', { username, password });
+export const login = async (userName: string, password: string) => {
+  const response = await api.post('/Users/Login', { userName, password });
   return response.data;
 };
 
@@ -23,8 +23,8 @@ export const getTickets = async () => {
   return response.data;
 };
 
-export const searchTickets = async (Number: string) => {
-  const response = await api.get(`/Tickets/GetTicketByNumber/${Number}`);
+export const searchTickets = async (id: string) => {
+  const response = await api.get(`/Tickets/${id}`);
   return response.data;
 };
 
@@ -41,4 +41,51 @@ export const updateTicket = async (id: number, ticket: Omit<Ticket, 'id'>) => {
 export const deleteTicket = async (id: number) => {
   const response = await api.delete(`/tickets/${id}`);
   return response.data;
+};
+
+// Pattern endpoints
+export const searchPatterns = async (date: string, jornada: string): Promise<Pattern> => {
+  try {
+      const response = await api.get('/patrons/Search', {
+          params: {
+              date: date,
+              jornada: jornada 
+          }
+      });
+      return response.data;
+  } catch (error) {
+      console.error('Error searching patterns:', error);
+      throw error;
+  }
+};
+
+export const createPattern = async (pattern: Omit<Pattern, 'id'>) => {
+  const response = await api.post('/patrons', pattern);
+  return response.data;
+};
+
+export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
+  const response = await api.put(`/patrons/${id}`, pattern);
+  return response.data;
+};
+
+export const deletePattern = async (id: number) => {
+  const response = await api.delete(`/patrons/${id}`);
+  return response.data;
+};
+
+export const calculatePattern = async (date: string, jornada: string): Promise<Pattern> => {
+  try{
+    const response = await api.post('/patrons/Calculate', {
+      params:{
+        date: date,
+        jornada: jornada
+      }
+    });
+    return response.data;
+  }
+  catch(error){
+    console.error('Error calculating pattern:', error);
+    throw error;
+  }
 };
