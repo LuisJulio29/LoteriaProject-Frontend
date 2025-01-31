@@ -1,8 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import Layout from './components/Layout';
 import LoginForm from './components/LoginForm';
 import TicketList from './components/TicketList';
+import PatronesPage from './pages/PatronesPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('token');
@@ -19,7 +21,19 @@ function App() {
           path="/tickets"
           element={
             <PrivateRoute>
-              <TicketList />
+              <Layout>
+                <TicketList />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/patrones"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <PatronesPage />
+              </Layout>
             </PrivateRoute>
           }
         />
