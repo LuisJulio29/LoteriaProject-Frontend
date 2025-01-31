@@ -16,3 +16,10 @@ export interface User {
   token: string;
   role: number;
 }
+
+export interface Pattern {
+  id?: number;
+  date: string;
+  jornada: string;
+  patronNumbers: number[];
+}
