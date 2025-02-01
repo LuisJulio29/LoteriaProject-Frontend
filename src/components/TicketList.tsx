@@ -131,7 +131,7 @@ export default function TicketList() {
    };
 
   return (
-    <div className="container mx-auto p-14">
+    <div className="container mx-auto space-y-6">
       <div className="mb-6 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Tickets</h1>
