@@ -65,7 +65,11 @@ export const createPattern = async (pattern: Omit<Pattern, 'id'>) => {
 };
 
 export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
-  const response = await api.put(`/patrons/${id}`, pattern);
+  const patternWithId = {
+    id: id,
+    ...pattern
+  };
+  const response = await api.put(`/patrons/${id}`, patternWithId);
   return response.data;
 };
 
