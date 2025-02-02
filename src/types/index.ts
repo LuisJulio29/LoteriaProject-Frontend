@@ -23,3 +23,8 @@ export interface Pattern {
   jornada: string;
   patronNumbers: number[];
 }
+
+export interface PatronRedundancy {
+  patron: Pattern;
+  redundancyCount: number;
+}
