@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Pattern, Ticket } from '../types';
+import { PatronRedundancy, Pattern, Ticket } from '../types';
 
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
@@ -28,6 +28,21 @@ export const searchTickets = async (id: string) => {
   return response.data;
 };
 
+export const getTicketsByDate = async (date: string, jornada: string) => {
+  try {
+    const response = await api.get('/Tickets/GetTicketByDate', {
+      params: {
+        date,
+        jornada
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting tickets by date:', error);
+    throw error;
+  }
+};
+
 export const createTicket = async (ticket: Omit<Ticket, 'id'>) => {
   const response = await api.post('/tickets', ticket);
   return response.data;
@@ -46,16 +61,16 @@ export const deleteTicket = async (id: number) => {
 // Pattern endpoints
 export const searchPatterns = async (date: string, jornada: string): Promise<Pattern> => {
   try {
-      const response = await api.get('/patrons/Search', {
-          params: {
-              date: date,
-              jornada: jornada 
-          }
-      });
-      return response.data;
+    const response = await api.get('/patrons/Search', {
+      params: {
+        date: date,
+        jornada: jornada 
+      }
+    });
+    return response.data;
   } catch (error) {
-      console.error('Error searching patterns:', error);
-      throw error;
+    console.error('Error searching patterns:', error);
+    throw error;
   }
 };
 
@@ -84,6 +99,16 @@ export const calculatePattern = async (date: string, jornada: string): Promise<P
     return response.data;
   } catch (error) {
     console.error('Error calculating pattern:', error);
+    throw error;
+  }
+};
+
+export const calculateRedundancy = async (pattern: Pattern): Promise<PatronRedundancy[]> => {
+  try {
+    const response = await api.post('/patrons/CalculateRedundancy', pattern);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating redundancy:', error);
     throw error;
   }
 };
