@@ -79,16 +79,10 @@ export const deletePattern = async (id: number) => {
 };
 
 export const calculatePattern = async (date: string, jornada: string): Promise<Pattern> => {
-  try{
-    const response = await api.post('/patrons/Calculate', {
-      params:{
-        date: date,
-        jornada: jornada
-      }
-    });
+  try {
+    const response = await api.post(`/patrons/Calculate?date=${date}&jornada=${jornada}`);
     return response.data;
-  }
-  catch(error){
+  } catch (error) {
     console.error('Error calculating pattern:', error);
     throw error;
   }
