@@ -1,10 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { searchPatterns, createPattern, updatePattern, deletePattern, calculatePattern } from '../services/api';
-import { Pattern } from '../types';
+import {
+  searchPatterns,
+  createPattern,
+  updatePattern,
+  deletePattern,
+  calculatePattern,
+  calculateRedundancy,
+  getTicketsByDate
+} from '../services/api';
+import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
 import PatternDisplay from '../components/PatternDisplay';
 import Spinner from '../components/Spinner';
@@ -16,16 +25,58 @@ export default function PatronesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingPattern, setEditingPattern] = useState<Pattern | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [redundancyData, setRedundancyData] = useState<PatronRedundancy[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [generatedTickets, setGeneratedTickets] = useState<any[]>([]);
+  const [isLoadingTickets, setIsLoadingTickets] = useState(false);
+  const [selectedTab] = useState<'generators' | 'generated'>('generators');
   const isAdmin = localStorage.getItem('role') === '0';
+
+  const loadRedundancyData = async (pattern: Pattern) => {
+    try {
+      const data = await calculateRedundancy(pattern);
+      setRedundancyData(data);
+    } catch (error) {
+      toast.error('Failed to load redundancy data');
+    }
+  };
+
+  const loadTickets = async (date: string, jornada: string) => {
+    setIsLoadingTickets(true);
+    try {
+      const data = await getTicketsByDate(date, jornada);
+      if (selectedTab === 'generators') {
+        setTickets(data);
+      } else {
+        setGeneratedTickets(data);
+      }
+    } catch (error) {
+      toast.error('Failed to load tickets');
+    } finally {
+      setIsLoadingTickets(false);
+    }
+  };
 
   const handleSearch = async () => {
     setIsLoading(true);
     try {
       const result = await searchPatterns(searchDate, searchJornada);
       setPattern(result);
+      await loadRedundancyData(result);
+      await loadTickets(searchDate, searchJornada);
+      
+      // Load generated tickets based on conditions
+      const generatedDate = searchJornada === 'noche' 
+        ? format(addDays(new Date(searchDate), 1), 'yyyy-MM-dd')
+        : searchDate;
+      const generatedJornada = searchJornada === 'noche' ? 'dia' : 'noche';
+      await loadTickets(generatedDate, generatedJornada);
     } catch (error) {
       toast.error('No pattern found');
       setPattern(null);
+      setRedundancyData([]);
+      setTickets([]);
+      setGeneratedTickets([]);
     } finally {
       setIsLoading(false);
     }
@@ -40,6 +91,16 @@ export default function PatronesPage() {
     try {
       const result = await calculatePattern(searchDate, searchJornada);
       setPattern(result);
+      await loadRedundancyData(result);
+      await loadTickets(searchDate, searchJornada);
+      
+      // Load generated tickets based on conditions
+      const generatedDate = searchJornada === 'noche' 
+        ? format(addDays(new Date(searchDate), 1), 'yyyy-MM-dd')
+        : searchDate;
+      const generatedJornada = searchJornada === 'noche' ? 'dia' : 'noche';
+      await loadTickets(generatedDate, generatedJornada);
+      
       toast.success('Pattern calculated successfully');
     } catch (error) {
       toast.error('Failed to calculate pattern');
@@ -78,11 +139,20 @@ export default function PatronesPage() {
       await deletePattern(pattern.id!);
       toast.success('Pattern deleted successfully');
       setPattern(null);
+      setRedundancyData([]);
+      setTickets([]);
+      setGeneratedTickets([]);
     } catch (error) {
       toast.error('Failed to delete pattern');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRedundancyClick = (pattern: Pattern) => {
+    setSearchDate(pattern.date);
+    setSearchJornada(pattern.jornada);
+    handleSearch();
   };
 
   return (
@@ -165,6 +235,11 @@ export default function PatronesPage() {
             onEdit={() => setEditingPattern(pattern)}
             onDelete={handleDelete}
             showActions={isAdmin}
+            redundancyData={redundancyData}
+            onRedundancyClick={handleRedundancyClick}
+            tickets={selectedTab === 'generators' ? tickets : undefined}
+            generatedTickets={selectedTab === 'generated' ? generatedTickets : undefined}
+            isLoadingTickets={isLoadingTickets}
           />
         )}
       </div>
