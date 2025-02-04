@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { Plus, Search } from 'lucide-react';
@@ -29,7 +29,6 @@ export default function PatronesPage() {
   const [tickets, setTickets] = useState<any[]>([]);
   const [generatedTickets, setGeneratedTickets] = useState<any[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
-  const [selectedTab] = useState<'generators' | 'generated'>('generators');
   const isAdmin = localStorage.getItem('role') === '0';
 
   const loadRedundancyData = async (pattern: Pattern) => {
@@ -41,15 +40,28 @@ export default function PatronesPage() {
     }
   };
 
-  const loadTickets = async (date: string, jornada: string) => {
+  const loadTickets = async (pattern: Pattern) => {
     setIsLoadingTickets(true);
     try {
-      const data = await getTicketsByDate(date, jornada);
-      if (selectedTab === 'generators') {
-        setTickets(data);
+      // Load generator tickets (same date and jornada as pattern)
+      const generatorTickets = await getTicketsByDate(pattern.date, pattern.jornada);
+      setTickets(generatorTickets);
+
+      // Load generated tickets
+      let generatedDate = pattern.date;
+      let generatedJornada = pattern.jornada;
+
+      if (pattern.jornada === 'dia') {
+        // If pattern is day, get night tickets of same day
+        generatedJornada = 'noche';
       } else {
-        setGeneratedTickets(data);
+        // If pattern is night, get day tickets of next day
+        generatedDate = format(addDays(new Date(pattern.date), 1), 'yyyy-MM-dd');
+        generatedJornada = 'dia';
       }
+
+      const generatedTicketsData = await getTicketsByDate(generatedDate, generatedJornada);
+      setGeneratedTickets(generatedTicketsData);
     } catch (error) {
       toast.error('Failed to load tickets');
     } finally {
@@ -63,14 +75,7 @@ export default function PatronesPage() {
       const result = await searchPatterns(searchDate, searchJornada);
       setPattern(result);
       await loadRedundancyData(result);
-      await loadTickets(searchDate, searchJornada);
-      
-      // Load generated tickets based on conditions
-      const generatedDate = searchJornada === 'noche' 
-        ? format(addDays(new Date(searchDate), 1), 'yyyy-MM-dd')
-        : searchDate;
-      const generatedJornada = searchJornada === 'noche' ? 'dia' : 'noche';
-      await loadTickets(generatedDate, generatedJornada);
+      await loadTickets(result);
     } catch (error) {
       toast.error('No pattern found');
       setPattern(null);
@@ -92,15 +97,7 @@ export default function PatronesPage() {
       const result = await calculatePattern(searchDate, searchJornada);
       setPattern(result);
       await loadRedundancyData(result);
-      await loadTickets(searchDate, searchJornada);
-      
-      // Load generated tickets based on conditions
-      const generatedDate = searchJornada === 'noche' 
-        ? format(addDays(new Date(searchDate), 1), 'yyyy-MM-dd')
-        : searchDate;
-      const generatedJornada = searchJornada === 'noche' ? 'dia' : 'noche';
-      await loadTickets(generatedDate, generatedJornada);
-      
+      await loadTickets(result);
       toast.success('Pattern calculated successfully');
     } catch (error) {
       toast.error('Failed to calculate pattern');
@@ -188,8 +185,7 @@ export default function PatronesPage() {
               value={searchJornada}
               onChange={(e) => setSearchJornada(e.target.value)}
               className="w-full px-4 py-2 border rounded-md"
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               <option value="dia">Día</option>
               <option value="noche">Noche</option>
             </select>
@@ -237,8 +233,8 @@ export default function PatronesPage() {
             showActions={isAdmin}
             redundancyData={redundancyData}
             onRedundancyClick={handleRedundancyClick}
-            tickets={selectedTab === 'generators' ? tickets : undefined}
-            generatedTickets={selectedTab === 'generated' ? generatedTickets : undefined}
+            tickets={tickets}
+            generatedTickets={generatedTickets}
             isLoadingTickets={isLoadingTickets}
           />
         )}
