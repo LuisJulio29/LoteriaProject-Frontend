@@ -49,7 +49,20 @@ export const createTicket = async (ticket: Omit<Ticket, 'id'>) => {
 };
 
 export const updateTicket = async (id: number, ticket: Omit<Ticket, 'id'>) => {
-  const response = await api.put(`/tickets/${id}`, ticket);
+  const ticketWithId = {
+    id: id,
+    ...ticket
+  };
+  const response = await api.put(`/tickets/${id}`, ticketWithId);
+  return response.data;
+};
+
+export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
+  const patternWithId = {
+    id: id,
+    ...pattern
+  };
+  const response = await api.put(`/patrons/${id}`, patternWithId);
   return response.data;
 };
 
@@ -79,14 +92,6 @@ export const createPattern = async (pattern: Omit<Pattern, 'id'>) => {
   return response.data;
 };
 
-export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
-  const patternWithId = {
-    id: id,
-    ...pattern
-  };
-  const response = await api.put(`/patrons/${id}`, patternWithId);
-  return response.data;
-};
 
 export const deletePattern = async (id: number) => {
   const response = await api.delete(`/patrons/${id}`);
