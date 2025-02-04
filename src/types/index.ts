@@ -10,6 +10,7 @@ export interface Ticket {
   date: string;
   loteria: string;
   jornada: string;
+  sing: string;
 }
 
 export interface User {
