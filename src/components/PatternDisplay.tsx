@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pattern, PatronRedundancy } from '../types';
 import { Pencil, Trash2, ExternalLink } from 'lucide-react';
 
@@ -26,6 +27,9 @@ export default function PatternDisplay({
 }: PatternDisplayProps) {
   const isAdmin = localStorage.getItem('role') === '0';
   const maxValue = Math.max(...pattern.patronNumbers);
+  const [activeTab, setActiveTab] = useState<'generators' | 'generated'>('generators');
+
+  const displayTickets = activeTab === 'generators' ? tickets : generatedTickets;
 
   return (
     <div className="space-y-6">
@@ -91,10 +95,10 @@ export default function PatternDisplay({
                     Jornada
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Redundancy Count
+                    Redundancia
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Ver Más
                   </th>
                 </tr>
               </thead>
@@ -129,15 +133,17 @@ export default function PatternDisplay({
             <h3 className="text-lg font-semibold mb-2">Tickets</h3>
             <div className="flex gap-4">
               <button
+                onClick={() => setActiveTab('generators')}
                 className={`px-4 py-2 rounded-md ${
-                  tickets ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
+                  activeTab === 'generators' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
                 }`}
               >
                 Generadores
               </button>
               <button
+                onClick={() => setActiveTab('generated')}
                 className={`px-4 py-2 rounded-md ${
-                  generatedTickets ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
+                  activeTab === 'generated' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
                 }`}
               >
                 Generados
@@ -169,7 +175,7 @@ export default function PatternDisplay({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {(tickets || generatedTickets)?.map((ticket, index) => (
+                  {displayTickets?.map((ticket, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
