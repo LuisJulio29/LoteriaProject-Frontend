@@ -16,7 +16,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
     date: format(new Date(), 'yyyy-MM-dd'),
     loteria: '',
     jornada: '',
-    sing: '',
+    sign: '',
   });
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
         date: format(new Date(initialData.date), 'yyyy-MM-dd'),
         loteria: initialData.loteria,
         jornada: initialData.jornada,
-        sing: initialData.sing,
+        sign: initialData.sign,
       });
     }
   }, [initialData]);
@@ -76,7 +76,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
                 required
                 value={formData.loteria}
                 onChange={(e) => setFormData({ 
-                  ...formData, loteria: e.target.value, sing: e.target.value === "Astro" ? formData.sing : ""})}
+                  ...formData, loteria: e.target.value, sign: e.target.value === "Astro" ? formData.sign : ""})}
                 className="w-full px-4 py-2 border rounded-md"
                 disabled={isSubmitting}>
               <option value={"Seleccione Un Chance"}></option>
@@ -101,8 +101,8 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               <label className="block text-sm font-medium text-gray-700">Signo</label>
               <select
                 required
-                value={formData.sing}
-                onChange={(e) => setFormData({ ...formData, sing: e.target.value })}
+                value={formData.sign}
+                onChange={(e) => setFormData({ ...formData, sign: e.target.value })}
                 className="w-full px-4 py-2 border rounded-md"
                 disabled={isSubmitting}
               >
