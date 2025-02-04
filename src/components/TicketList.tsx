@@ -253,7 +253,7 @@ export default function TicketList() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {currentTickets.map((ticket) => (
                   <tr key={ticket.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{ticket.number} {ticket.sing}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {format(new Date(ticket.date), 'dd/MM/yyyy')}
                     </td>
