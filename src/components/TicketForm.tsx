@@ -16,6 +16,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
     date: format(new Date(), 'yyyy-MM-dd'),
     loteria: '',
     jornada: '',
+    sing: '',
   });
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
         date: format(new Date(initialData.date), 'yyyy-MM-dd'),
         loteria: initialData.loteria,
         jornada: initialData.jornada,
+        sing: initialData.sing,
       });
     }
   }, [initialData]);
@@ -46,6 +48,17 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
           {initialData ? 'Editar Chance' : 'Añadir Nuevo Chance'}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+            <label className="block text-sm font-medium text-gray-700">Fecha</label>
+            <input
+              type="date"
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
+              required
+              disabled={isSubmitting}
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Numero</label>
             <input
@@ -58,39 +71,73 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Fecha</label>
-            <input
-              type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
-              required
-              disabled={isSubmitting}
-            />
-          </div>
-          <div>
             <label className="block text-sm font-medium text-gray-700">Loteria</label>
-            <input
-              type="text"
-              value={formData.loteria}
-              onChange={(e) => setFormData({ ...formData, loteria: e.target.value })}
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
-              required
-              disabled={isSubmitting}
-            />
+              <select
+                required
+                value={formData.loteria}
+                onChange={(e) => setFormData({ 
+                  ...formData, loteria: e.target.value, sing: e.target.value === "Astro" ? formData.sing : ""})}
+                className="w-full px-4 py-2 border rounded-md"
+                disabled={isSubmitting}>
+              <option value={"Seleccione Un Chance"}></option>
+              <option value={"Antioqueñita"}>Antioqueñita</option>
+              <option value={"Astro"}>Astro</option>
+              <option value={"Cafeterito"}>Cafeterito</option>
+              <option value={"Caribeña"}>Caribeña</option>
+              <option value={"Chontico"}>Chontico</option>
+              <option value={"Culona"}>Culona</option>
+              <option value={"Dorado"}>Dorado</option>
+              <option value={"Fantastica"}>Fantastica</option>
+              <option value={"Motilon"}>Motilon</option>
+              <option value={"Paisita"}>Paisita</option>
+              <option value={"Pijao De Oro"}>Pijao</option>
+              <option value={"Saman"}>Saman</option>
+              <option value={"Sinuano"}>Sinuano</option>
+            </select>
           </div>
+         {/* Renderizar el select de signo solo cuando la lotería es Astro */}
+          {formData.loteria === "Astro" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Signo</label>
+              <select
+                required
+                value={formData.sing}
+                onChange={(e) => setFormData({ ...formData, sing: e.target.value })}
+                className="w-full px-4 py-2 border rounded-md"
+                disabled={isSubmitting}
+              >
+                <option value="">Seleccione un signo</option>
+                <option value="Leo">Leo</option>
+                <option value="Virgo">Virgo</option>
+                <option value="Libra">Libra</option>
+                <option value="Escorpio">Escorpio</option>
+                <option value="Sagitario">Sagitario</option>
+                <option value="Capricornio">Capricornio</option>
+                <option value="Acuario">Acuario</option>
+                <option value="Piscis">Piscis</option>
+                <option value="Aries">Aries</option>
+                <option value="Tauro">Tauro</option>
+                <option value="Geminis">Geminis</option>
+                <option value="Cancer">Cancer</option>
+              </select>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700">Jornada</label>
-            <input
-              type="text"
+            <select
+              required
               value={formData.jornada}
               onChange={(e) => setFormData({ ...formData, jornada: e.target.value })}
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
-              required
+              className="w-full px-4 py-2 border rounded-md">
               disabled={isSubmitting}
-            />
+              <option value={""}></option>
+              <option value={"Dia"}>Dia</option>
+              <option value={"Tarde"}>Tarde</option>
+              <option value={"Noche"}>Noche</option>
+            </select>
           </div>
           <div className="flex justify-center space-x-2 pt-4">
+          
             <button
               type="button"
               onClick={onCancel}
