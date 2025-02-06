@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import LoginForm from './components/LoginForm';
 import TicketList from './components/TicketList';
 import PatronesPage from './pages/PatronesPage';
+import AstroPage from './pages/AstroPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('token');
@@ -33,6 +34,16 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <PatronesPage />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/astro"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <AstroPage />
               </Layout>
             </PrivateRoute>
           }
