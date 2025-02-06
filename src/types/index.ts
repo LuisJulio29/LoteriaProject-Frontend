@@ -8,9 +8,9 @@ export interface Ticket {
   id: number;
   number: string;
   date: string;
+  sign: string;
   loteria: string;
   jornada: string;
-  sign: string;
 }
 
 export interface User {
@@ -28,4 +28,30 @@ export interface Pattern {
 export interface PatronRedundancy {
   patron: Pattern;
   redundancyCount: number;
+}
+
+export enum AstroSign {
+  Aries = 1,
+  Tauro = 2,
+  Geminis = 3,
+  Cancer = 4,
+  Leo = 5,
+  Virgo = 6,
+  Libra = 7,
+  Escorpio = 8,
+  Sagitario = 9,
+  Capricornio = 10,
+  Acuario = 11,
+  Piscis = 12
+}
+
+export interface AstroPatron {
+  id: number;
+  date: string;
+  jornada: string;
+  sign: AstroSign[];
+  row1: number[];
+  row2: number[];
+  row3: number[];
+  row4: number[];
 }
