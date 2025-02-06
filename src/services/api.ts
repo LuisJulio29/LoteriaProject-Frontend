@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PatronRedundancy, Pattern, Ticket } from '../types';
+import { AstroPatron, PatronRedundancy, Pattern, Ticket } from '../types';
 
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
@@ -23,8 +23,8 @@ export const getTickets = async () => {
   return response.data;
 };
 
-export const searchTickets = async (id: string) => {
-  const response = await api.get(`/Tickets/${id}`);
+export const searchTickets = async (Number: string) => {
+  const response = await api.get(`/Tickets/GetTicketByNumber/${Number}`);
   return response.data;
 };
 
@@ -42,6 +42,21 @@ export const getTicketsByDate = async (date: string, jornada: string) => {
     throw error;
   }
 };
+export const getAstroTicketsByDate = async (date: string, jornada: string) => {
+  try {
+    const response = await api.get('/Tickets/GetAstroTicketByDate', {
+      params: {
+        date,
+        jornada
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting astro tickets by date:', error);
+    throw error;
+  }
+};
+
 
 export const createTicket = async (ticket: Omit<Ticket, 'id'>) => {
   const response = await api.post('/tickets', ticket);
@@ -114,6 +129,31 @@ export const calculateRedundancy = async (pattern: Pattern): Promise<PatronRedun
     return response.data;
   } catch (error) {
     console.error('Error calculating redundancy:', error);
+    throw error;
+  }
+};
+
+export const getAstroPatronByDate = async (date: string, jornada: string): Promise<AstroPatron> => {
+  try {
+    const response = await api.get('/AstroPatrons/GetAstroPatronByDate', {
+      params: {
+        date,
+        jornada
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting astro patron:', error);
+    throw error;
+  }
+};
+
+export const calculateAstroPatron = async (date: string, jornada: string): Promise<AstroPatron> => {
+  try {
+    const response = await api.post(`/AstroPatrons/Calculate?date=${date}&jornada=${jornada}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating astro patron:', error);
     throw error;
   }
 };
