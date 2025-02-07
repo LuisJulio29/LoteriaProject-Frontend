@@ -1,6 +1,10 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy } from '../types';
 import { Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay } from '../services/api';
+import toast from 'react-hot-toast';
+import Spinner from './Spinner';
 
 interface PatternDisplayProps {
   pattern: Pattern;
@@ -27,9 +31,162 @@ export default function PatternDisplay({
 }: PatternDisplayProps) {
   const isAdmin = localStorage.getItem('role') === '0';
   const maxValue = Math.max(...pattern.patronNumbers);
-  const [activeTab, setActiveTab] = useState<'generators' | 'generated'>('generators');
+  const [activeTab, setActiveTab] = useState<'generators' | 'generated' | 'analysis'>('generators');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'redundancy-date' | 'not-played' | 'void-patterns'>('redundancy-date');
+  const [redundancyInDate, setRedundancyInDate] = useState<Pattern[]>([]);
+  const [numbersNotPlayed, setNumbersNotPlayed] = useState<string[]>([]);
+  const [voidPatterns, setVoidPatterns] = useState<Pattern[]>([]);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
 
   const displayTickets = activeTab === 'generators' ? tickets : generatedTickets;
+
+  useEffect(() => {
+    if (activeTab === 'analysis') {
+      loadAnalysisData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, activeAnalysisTab]);
+
+  const loadAnalysisData = async () => {
+    setIsLoadingAnalysis(true);
+    try {
+      switch (activeAnalysisTab) {
+        case 'redundancy-date':
+          { const redundancyData = await getRedundancyInDate(pattern.date);
+          setRedundancyInDate(redundancyData);
+          break; }
+        case 'not-played':
+          { const notPlayedData = await getNumbersNotPlayed(pattern.date, pattern.jornada);
+          setNumbersNotPlayed(notPlayedData);
+          break; }
+        case 'void-patterns':
+          { const voidData = await getVoidInDay(pattern.id!);
+          setVoidPatterns(voidData);
+          break; }
+      }
+    } catch (error) {
+      toast.error('Failed to load analysis data');
+    } finally {
+      setIsLoadingAnalysis(false);
+    }
+  };
+
+  const renderAnalysisContent = () => {
+    if (isLoadingAnalysis) {
+      return (
+        <div className="flex justify-center items-center py-8">
+          <Spinner className="h-8 w-8 text-indigo-600" />
+        </div>
+      );
+    }
+
+    switch (activeAnalysisTab) {
+      case 'redundancy-date':
+        return (
+          <div className="overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-4">Redundancia en fecha</h3>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Jornada
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Pattern Numbers
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {redundancyInDate.map((pattern, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {new Date(pattern.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {pattern.patronNumbers.map((num, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+
+      case 'not-played':
+        return (
+          <div className="overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-4">Números No Jugados</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {numbersNotPlayed.map((number, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-50 rounded-lg p-4 text-center font-mono text-lg"
+                >
+                  {number}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'void-patterns':
+        return (
+          <div className="overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-4">Patrones con 0</h3>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Jornada
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Pattern Numbers
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {voidPatterns.map((pattern, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {new Date(pattern.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {pattern.patronNumbers.map((num, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -80,7 +237,6 @@ export default function PatternDisplay({
         </div>
       </div>
 
-      {/* Concurrencia Table */}
       {redundancyData && (
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Concurrencia</h3>
@@ -95,10 +251,10 @@ export default function PatternDisplay({
                     Jornada
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Redundancia
+                    Redundancy Count
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ver Más
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -126,32 +282,80 @@ export default function PatternDisplay({
         </div>
       )}
 
-      {/* Tickets Table */}
-      {(tickets || generatedTickets) && (
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Tickets</h3>
-            <div className="flex gap-4">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-6">
+          <div className="flex gap-4 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('generators')}
+              className={`px-4 py-2 font-medium text-sm ${
+                activeTab === 'generators'
+                  ? 'border-b-2 border-indigo-500 text-indigo-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Generadores
+            </button>
+            <button
+              onClick={() => setActiveTab('generated')}
+              className={`px-4 py-2 font-medium text-sm ${
+                activeTab === 'generated'
+                  ? 'border-b-2 border-indigo-500 text-indigo-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Generados
+            </button>
+            <button
+              onClick={() => setActiveTab('analysis')}
+              className={`px-4 py-2 font-medium text-sm ${
+                activeTab === 'analysis'
+                  ? 'border-b-2 border-indigo-500 text-indigo-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Análisis
+            </button>
+          </div>
+        </div>
+
+        {activeTab === 'analysis' ? (
+          <div>
+            <div className="flex gap-4 mb-6">
               <button
-                onClick={() => setActiveTab('generators')}
-                className={`px-4 py-2 rounded-md ${
-                  activeTab === 'generators' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
+                onClick={() => setActiveAnalysisTab('redundancy-date')}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  activeAnalysisTab === 'redundancy-date'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                Generadores
+                Redundancia en fecha
               </button>
               <button
-                onClick={() => setActiveTab('generated')}
-                className={`px-4 py-2 rounded-md ${
-                  activeTab === 'generated' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700'
+                onClick={() => setActiveAnalysisTab('not-played')}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  activeAnalysisTab === 'not-played'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                Generados
+                Números No Jugados
+              </button>
+              <button
+                onClick={() => setActiveAnalysisTab('void-patterns')}
+                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  activeAnalysisTab === 'void-patterns'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Patrones con 0
               </button>
             </div>
+            {renderAnalysisContent()}
           </div>
-          
-          {isLoadingTickets ? (
+        ) : (
+          isLoadingTickets ? (
             <div className="flex justify-center items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             </div>
@@ -188,9 +392,9 @@ export default function PatternDisplay({
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
-      )}
+          )
+        )}
+      </div>
     </div>
   );
 }
