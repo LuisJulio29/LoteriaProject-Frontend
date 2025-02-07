@@ -157,3 +157,37 @@ export const calculateAstroPatron = async (date: string, jornada: string): Promi
     throw error;
   }
 };
+
+export const getRedundancyInDate = async (date: string): Promise<Pattern[]> => {
+  try {
+    const response = await api.get('/patrons/GetRedundancyinDate', {
+      params: { date }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting redundancy in date:', error);
+    throw error;
+  }
+};
+
+export const getNumbersNotPlayed = async (date: string, jornada: string): Promise<string[]> => {
+  try {
+    const response = await api.get('/patrons/GetNumbersNotPlayed', {
+      params: { date, jornada }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting numbers not played:', error);
+    throw error;
+  }
+};
+
+export const getVoidInDay = async (id: number): Promise<Pattern[]> => {
+  try {
+    const response = await api.get(`/patrons/GetVoidinDay/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting void in day:', error);
+    throw error;
+  }
+};
