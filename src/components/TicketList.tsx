@@ -32,7 +32,7 @@ export default function TicketList() {
       setTickets(data);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Failed to load tickets');
+      toast.error('Error al cargar los tickets');
     } finally {
       setIsLoading(false);
     }
@@ -43,10 +43,10 @@ export default function TicketList() {
       const data = await getTickets();
       setTickets(data);
       setSearchNumber('');
-      toast.success('Tickets reloaded successfully');
+      toast.success('Chances recargados correctamente');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Failed to reload tickets');
+      toast.error('Error al recargar los Chances');
     } finally {
       setIsReloading(false);
     }
@@ -64,7 +64,7 @@ export default function TicketList() {
       setTickets(data);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Search failed');
+      toast.error('Busqueda fallida');
     } finally {
       setIsSearching(false);
     }
@@ -74,12 +74,12 @@ export default function TicketList() {
     setIsLoading(true);
     try {
       await createTicket(ticketData);
-      toast.success('Ticket created successfully');
+      toast.success('Chance Creado Correctamente');
       setShowForm(false);
       loadTickets();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Failed to create ticket');
+      toast.error('Error al crear el Chance');
       setIsLoading(false);
     }
   };
@@ -89,26 +89,26 @@ export default function TicketList() {
     setIsLoading(true);
     try {
       await updateTicket(editingTicket.id, ticketData);
-      toast.success('Ticket updated successfully');
+      toast.success('Chance Actualizado Correctamente');
       setEditingTicket(null);
       loadTickets();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Failed to update ticket');
+      toast.error('Error al actualizar el Chance');
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this ticket?')) return;
+    if (!window.confirm('Estas seguro de eliminar este Chance?')) return;
     setIsLoading(true);
     try {
       await deleteTicket(id);
-      toast.success('Ticket deleted successfully');
+      toast.success('Chance Eliminado Correctamente');
       loadTickets();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Failed to delete ticket');
+      toast.error('Error al eliminar el Chance');
       setIsLoading(false);
     }
   };
@@ -134,7 +134,7 @@ export default function TicketList() {
     <div className="container mx-auto space-y-6">
       <div className="mb-6 space-y-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Tickets</h1>
+          <h1 className="text-2xl font-bold">Chances</h1>
           {isAdmin && (
             <button
               onClick={() => setShowForm(true)}
@@ -156,12 +156,12 @@ export default function TicketList() {
     {isReloading ? (
       <>
         <Spinner className="h-4 w-4" />
-        Reloading...
+        Recargando...
       </>
     ) : (
       <>
         <RotateCw className="h-4 w-4" />
-        Reload
+        Recargar
       </>
     )}
   </button>
@@ -294,9 +294,9 @@ export default function TicketList() {
                     <span className="font-medium">
                       {Math.min(endIndex, filteredTickets.length)}
                     </span>{' '}
-                    of{' '}
+                    de{' '}
                     <span className="font-medium">{filteredTickets.length}</span>{' '}
-                    results
+                    resultados
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -306,7 +306,7 @@ export default function TicketList() {
                     className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    Anterior
                   </button>
                   <div className="flex items-center gap-2">
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -357,7 +357,7 @@ export default function TicketList() {
                     disabled={currentPage === totalPages}
                     className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    Siguiente
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
