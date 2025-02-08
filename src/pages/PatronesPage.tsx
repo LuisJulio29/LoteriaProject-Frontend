@@ -4,15 +4,7 @@ import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
-import {
-  searchPatterns,
-  createPattern,
-  updatePattern,
-  deletePattern,
-  calculatePattern,
-  calculateRedundancy,
-  getTicketsByDate
-} from '../services/api';
+import {searchPatterns,createPattern,updatePattern,deletePattern,calculatePattern,calculateRedundancy,getTicketsByDate} from '../services/api';
 import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
 import PatternDisplay from '../components/PatternDisplay';
@@ -36,7 +28,7 @@ export default function PatronesPage() {
       const data = await calculateRedundancy(pattern);
       setRedundancyData(data);
     } catch (error) {
-      toast.error('Failed to load redundancy data');
+      toast.error('Error al cargar datos de redundancia');
     }
   };
 
@@ -63,7 +55,7 @@ export default function PatronesPage() {
       const generatedTicketsData = await getTicketsByDate(generatedDate, generatedJornada);
       setGeneratedTickets(generatedTicketsData);
     } catch (error) {
-      toast.error('Failed to load tickets');
+      toast.error('Error al cargar Chances');
     } finally {
       setIsLoadingTickets(false);
     }
@@ -77,7 +69,7 @@ export default function PatronesPage() {
       await loadRedundancyData(result);
       await loadTickets(result);
     } catch (error) {
-      toast.error('No pattern found');
+      toast.error('No se encuentran Patrones');
       setPattern(null);
       setRedundancyData([]);
       setTickets([]);
@@ -89,7 +81,7 @@ export default function PatronesPage() {
 
   const handleCalculate = async () => {
     if (!isAdmin) {
-      toast.error('Only administrators can calculate patterns');
+      toast.error('Solo los administradores pueden generar patrones');
       return;
     }
     setIsLoading(true);
@@ -98,9 +90,9 @@ export default function PatronesPage() {
       setPattern(result);
       await loadRedundancyData(result);
       await loadTickets(result);
-      toast.success('Pattern calculated successfully');
+      toast.success('Patron generado exitosamente');
     } catch (error) {
-      toast.error('Failed to calculate pattern');
+      toast.error('Error al generar patron');
     } finally {
       setIsLoading(false);
     }
@@ -109,11 +101,11 @@ export default function PatronesPage() {
   const handleCreate = async (patternData: Omit<Pattern, 'id'>) => {
     try {
       await createPattern(patternData);
-      toast.success('Pattern created successfully');
+      toast.success('Patron creado exitosamente');
       setShowForm(false);
       handleSearch();
     } catch (error) {
-      toast.error('Failed to create pattern');
+      toast.error('Error al crear patron');
     }
   };
 
@@ -121,26 +113,26 @@ export default function PatronesPage() {
     if (!editingPattern?.id) return;
     try {
       await updatePattern(editingPattern.id, patternData);
-      toast.success('Pattern updated successfully');
+      toast.success('Patron actualizado exitosamente');
       setEditingPattern(null);
       handleSearch();
     } catch (error) {
-      toast.error('Failed to update pattern');
+      toast.error('Error al actualizar patron');
     }
   };
 
   const handleDelete = async () => {
-    if (!pattern || !window.confirm('Are you sure you want to delete this pattern?')) return;
+    if (!pattern || !window.confirm('Estás Seguro que Quieres eliminar este Patron?')) return;
     setIsLoading(true);
     try {
       await deletePattern(pattern.id!);
-      toast.success('Pattern deleted successfully');
+      toast.success('Patron eliminado exitosamente');
       setPattern(null);
       setRedundancyData([]);
       setTickets([]);
       setGeneratedTickets([]);
     } catch (error) {
-      toast.error('Failed to delete pattern');
+      toast.error('Error al eliminar patron');
     } finally {
       setIsLoading(false);
     }
@@ -162,7 +154,7 @@ export default function PatronesPage() {
             className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
           >
             <Plus className="h-4 w-4" />
-            Add Pattern
+            Añadir Patron
           </button>
         )}
       </div>
@@ -170,7 +162,7 @@ export default function PatronesPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
             <input
               type="date"
               value={searchDate}
@@ -199,12 +191,12 @@ export default function PatronesPage() {
               {isLoading ? (
                 <>
                   <Spinner className="h-4 w-4" />
-                  Searching...
+                  Buscando...
                 </>
               ) : (
                 <>
                   <Search className="h-4 w-4" />
-                  Search Pattern
+                  Buscar Patron
                 </>
               )}
             </button>
@@ -213,13 +205,13 @@ export default function PatronesPage() {
 
         {!pattern && !isLoading && (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-4">No pattern found for the selected criteria</p>
+            <p className="text-gray-600 mb-4">No se encontraron Patrones para esos Criterios</p>
             {isAdmin && (
               <button
                 onClick={handleCalculate}
                 className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700"
               >
-                Generate Pattern
+                Generar Patron
               </button>
             )}
           </div>
