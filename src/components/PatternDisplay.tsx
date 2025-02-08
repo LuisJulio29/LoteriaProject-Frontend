@@ -13,8 +13,8 @@ interface PatternDisplayProps {
   showActions?: boolean;
   redundancyData?: PatronRedundancy[];
   onRedundancyClick?: (pattern: Pattern) => void;
-  tickets?: { number: string; date: string; loteria: string; jornada: string }[];
-  generatedTickets?: { number: string; date: string; loteria: string; jornada: string }[];
+  tickets?: { number: string; date: string; loteria: string; jornada: string ;sign: string}[];
+  generatedTickets?: { number: string; date: string; loteria: string; jornada: string ;sign :string}[];
   isLoadingTickets?: boolean;
 }
 
@@ -65,7 +65,7 @@ export default function PatternDisplay({
           break; }
       }
     } catch (error) {
-      toast.error('Failed to load analysis data');
+      toast.error('Error al cargar datos de análisis');
     } finally {
       setIsLoadingAnalysis(false);
     }
@@ -89,13 +89,13 @@ export default function PatternDisplay({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    Fecha
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Jornada
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pattern Numbers
+                    Numeros del Patron
                   </th>
                 </tr>
               </thead>
@@ -150,13 +150,13 @@ export default function PatternDisplay({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    Fecha
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Jornada
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pattern Numbers
+                    Numeros del Patron
                   </th>
                 </tr>
               </thead>
@@ -193,9 +193,9 @@ export default function PatternDisplay({
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-lg font-semibold">Pattern Results</h3>
+            <h3 className="text-lg font-semibold">Resultados del Patron</h3>
             <p className="text-sm text-gray-600">
-              Date: {new Date(pattern.date).toLocaleDateString()}
+              Fecha: {new Date(pattern.date).toLocaleDateString()}
             </p>
             <p className="text-sm text-gray-600">
               Jornada: {pattern.jornada}
@@ -251,10 +251,10 @@ export default function PatternDisplay({
                     Jornada
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Redundancy Count
+                    Contador de Redundancia
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    ver más
                   </th>
                 </tr>
               </thead>
@@ -365,10 +365,10 @@ export default function PatternDisplay({
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Number
+                      Numero
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
+                      Fecha
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Loteria
@@ -381,7 +381,7 @@ export default function PatternDisplay({
                 <tbody className="bg-white divide-y divide-gray-200">
                   {displayTickets?.map((ticket, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{ticket.number} {ticket.sign}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {new Date(ticket.date).toLocaleDateString()}
                       </td>
