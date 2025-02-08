@@ -30,7 +30,7 @@ export default function AstroPage() {
       setTickets(ticketsData);
       setAstroPatron(patronData);
     } catch (error) {
-      toast.error('No pattern found');
+      toast.error('Patron no Encontrado');
       setAstroPatron(null);
       setTickets([]);
     } finally {
@@ -45,9 +45,9 @@ export default function AstroPage() {
       const ticketsData = await getAstroTicketsByDate(searchDate, searchJornada);
       setAstroPatron(patronData);
       setTickets(ticketsData);
-      toast.success('Pattern calculated successfully');
+      toast.success('Patron Calculado Exitosamente');
     } catch (error) {
-      toast.error('Failed to calculate pattern');
+      toast.error('Error al calcular el patron');
     } finally {
       setIsLoading(false);
     }
@@ -60,9 +60,9 @@ export default function AstroPage() {
       const ticketsData = await getAstroTicketsByDate(searchDate, searchJornada);
       setAstroPatron(patronData);
       setTickets(ticketsData);
-      toast.success('Pattern regenerated successfully');
+      toast.success('Patron Generado Exitosamente');
     } catch (error) {
-      toast.error('Failed to regenerate pattern');
+      toast.error('Error al generar el patron');
     } finally {
       setIsRegenerating(false);
     }
@@ -140,7 +140,7 @@ export default function AstroPage() {
 
     return (
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">Zodiac Sign Frequency</h3>
+        <h3 className="text-lg font-semibold mb-4">Frecuencia de Signo Zodiacal </h3>
         <div className="grid grid-cols-6 gap-2">
           {zodiacSigns.map((sign) => (
             <div key={sign.name} className="flex flex-col items-center">
@@ -164,13 +164,13 @@ export default function AstroPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Astro Patterns</h1>
+        <h1 className="text-2xl font-bold">Patron Astro</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
             <input
               type="date"
               value={searchDate}
@@ -187,8 +187,8 @@ export default function AstroPage() {
               className="w-full px-4 py-2 border rounded-md"
               disabled={isLoading}
             >
-              <option value="dia">Día</option>
-              <option value="noche">Noche</option>
+              <option value="dia">Sol</option>
+              <option value="noche">Luna</option>
             </select>
           </div>
           <div className="flex items-end">
@@ -200,12 +200,12 @@ export default function AstroPage() {
               {isLoading ? (
                 <>
                   <Spinner className="h-4 w-4" />
-                  Searching...
+                  Buscando...
                 </>
               ) : (
                 <>
                   <Search className="h-4 w-4" />
-                  Search Pattern
+                  Buscar Patron
                 </>
               )}
             </button>
@@ -214,30 +214,30 @@ export default function AstroPage() {
 
         {!astroPatron && !isLoading && (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-4">No pattern found for the selected criteria</p>
+            <p className="text-gray-600 mb-4">No se encontró ningun patron de Astro para ese mes</p>
             <button
               onClick={handleCalculate}
               className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700"
             >
-              Generate Pattern
+              Generar Patron de Astro
             </button>
           </div>
         )}
 
         {tickets.length > 0 && (
           <div className="mt-6 bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
-            <h3 className="text-lg font-semibold mb-4">Tickets</h3>
+            <h3 className="text-lg font-semibold mb-4">Chances</h3>
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Number
+                    Numero
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Signo
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
+                    Fecha
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Loteria
@@ -277,12 +277,12 @@ export default function AstroPage() {
                 {isRegenerating ? (
                   <>
                     <Spinner className="h-4 w-4" />
-                    Regenerating...
+                    Regenerando...
                   </>
                 ) : (
                   <>
                     <RefreshCw className="h-4 w-4" />
-                    Regenerate Pattern
+                    ReGenerar Patron Astro
                   </>
                 )}
               </button>
