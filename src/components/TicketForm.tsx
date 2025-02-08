@@ -144,7 +144,7 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               disabled={isSubmitting}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
@@ -154,10 +154,10 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               {isSubmitting ? (
                 <>
                   <Spinner className="h-4 w-4 mr-2" />
-                  {initialData ? 'Updating...' : 'Creating...'}
+                  {initialData ? 'Actualizando...' : 'Creando...'}
                 </>
               ) : (
-                initialData ? 'Update' : 'Create'
+                initialData ? 'Actualizar' : 'Crear'
               )}
             </button>
           </div>
