@@ -19,14 +19,14 @@ export default function LoginForm() {
       if (response.isSuccess) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.roles.toString());
-        toast.success('Login successful!');
+        toast.success('Inicio de Seccion Exitoso!');
         navigate('/tickets');
       } else {
-        toast.error('Invalid credentials');
+        toast.error('Credeciales Incorrectas');
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Login failed');
+      toast.error('Inicio de seccion fallido');
     } finally {
       setIsLoading(false);
     }
