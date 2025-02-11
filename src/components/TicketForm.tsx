@@ -93,6 +93,8 @@ export default function TicketForm({ onSubmit, initialData, onCancel }: TicketFo
               <option value={"Pijao De Oro"}>Pijao</option>
               <option value={"Saman"}>Saman</option>
               <option value={"Sinuano"}>Sinuano</option>
+              <option value={"Paisita 3"}>Paisita 3</option>
+              <option value={"Super Chontico"}>Super Chontico</option>
             </select>
           </div>
          {/* Renderizar el select de signo solo cuando la lotería es Astro */}
