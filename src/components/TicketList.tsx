@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import { Pencil, Trash2, Plus, Search, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, Trash2, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets } from '../services/api';
+import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets, uploadTickets } from '../services/api';
 import { Ticket } from '../types';
 import TicketForm from './TicketForm';
 import Spinner from './Spinner';
@@ -15,6 +15,7 @@ export default function TicketList() {
   const [isLoading, setIsLoading] = useState(false);
   const [isReloading, setIsReloading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [filters, setFilters] = useState({
     date: '',
     loteria: '',
@@ -24,6 +25,7 @@ export default function TicketList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
   const isAdmin = localStorage.getItem('role') === '0';
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadTickets = async () => {
     setIsLoading(true);
@@ -37,6 +39,7 @@ export default function TicketList() {
       setIsLoading(false);
     }
   };
+
   const handleReload = async () => {
     setIsReloading(true);
     try {
@@ -113,6 +116,26 @@ export default function TicketList() {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      await uploadTickets(file);
+      toast.success('Tickets subidos exitosamente');
+      handleReload(); // Refresh the ticket list after successful upload
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Error al subir tickets');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const filteredTickets = tickets.filter((ticket) => {
     return (
       (!filters.date || ticket.date.includes(filters.date)) &&
@@ -136,14 +159,40 @@ export default function TicketList() {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Chances</h1>
           {isAdmin && (
-            <button
-              onClick={() => setShowForm(true)}
-              disabled={isLoading}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Plus className="h-4 w-4" />
-              Añadir Chance
-            </button>
+            <div className="flex gap-2">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".xlsx,.xls"
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUploading ? (
+                  <>
+                    <Spinner className="h-4 w-4 mr-2" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    Insertar
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Plus className="h-4 w-4" />
+                Añadir Chance
+              </button>
+            </div>
           )}
         </div>
 
