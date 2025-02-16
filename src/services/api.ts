@@ -191,3 +191,34 @@ export const getVoidInDay = async (id: number): Promise<Pattern[]> => {
     throw error;
   }
 };
+
+export const uploadTickets = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const response = await api.post('/Tickets/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading tickets:', error);
+    throw error;
+  }
+};
+
+export const calculatePatternRange = async (
+  startDate: string,
+  startJornada: string,
+  endDate: string,
+  endJornada: string
+) => {
+  try {
+    const response = await api.post(`/patrons/CalculateRange?dateInit=${startDate}&jornadaInit=${startJornada}&dateFinal=${endDate}&jornadaFinal=${endJornada}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating pattern range:', error);
+    throw error;
+  }
+};
