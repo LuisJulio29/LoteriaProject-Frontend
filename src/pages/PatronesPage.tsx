@@ -4,9 +4,19 @@ import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
-import {searchPatterns,createPattern,updatePattern,deletePattern,calculatePattern,calculateRedundancy,getTicketsByDate} from '../services/api';
+import {
+  searchPatterns,
+  createPattern,
+  updatePattern,
+  deletePattern,
+  calculatePattern,
+  calculateRedundancy,
+  getTicketsByDate,
+  calculatePatternRange
+} from '../services/api';
 import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
+import PatternRangeForm from '../components/PatternRangeForm';
 import PatternDisplay from '../components/PatternDisplay';
 import Spinner from '../components/Spinner';
 
@@ -15,6 +25,7 @@ export default function PatronesPage() {
   const [searchJornada, setSearchJornada] = useState('dia');
   const [pattern, setPattern] = useState<Pattern | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showRangeForm, setShowRangeForm] = useState(false);
   const [editingPattern, setEditingPattern] = useState<Pattern | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [redundancyData, setRedundancyData] = useState<PatronRedundancy[]>([]);
@@ -35,7 +46,6 @@ export default function PatronesPage() {
   const loadTickets = async (pattern: Pattern) => {
     setIsLoadingTickets(true);
     try {
-      // Load generator tickets (same date and jornada as pattern)
       const generatorTickets = await getTicketsByDate(pattern.date, pattern.jornada);
       setTickets(generatorTickets);
 
@@ -43,7 +53,8 @@ export default function PatronesPage() {
       let generatedDate = pattern.date;
       let generatedJornada = pattern.jornada;
 
-      if (pattern.jornada === 'dia') {
+      if (pattern.jornada.toLowerCase() === 'dia') {
+        
         // If pattern is day, get night tickets of same day
         generatedJornada = 'noche';
       } else {
@@ -144,18 +155,44 @@ export default function PatronesPage() {
     handleSearch();
   };
 
+  const handleCalculateRange = async (
+    startDate: string,
+    startJornada: string,
+    endDate: string,
+    endJornada: string
+  ) => {
+    try {
+      await calculatePatternRange(startDate, startJornada, endDate, endJornada);
+      toast.success('Patrones calculados exitosamente');
+      setShowRangeForm(false);
+      // Optionally refresh the current pattern if it falls within the calculated range
+      handleSearch();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Error al calcular patrones');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Patrones</h1>
         {isAdmin && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-          >
-            <Plus className="h-4 w-4" />
-            Añadir Patron
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowRangeForm(true)}
+              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+            >
+              <Plus className="h-4 w-4" />
+              Calcular Rango
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+            >
+              <Plus className="h-4 w-4" />
+              Añadir Patron
+            </button>
+          </div>
         )}
       </div>
 
@@ -240,6 +277,13 @@ export default function PatronesPage() {
             setShowForm(false);
             setEditingPattern(null);
           }}
+        />
+      )}
+
+      {showRangeForm && isAdmin && (
+        <PatternRangeForm
+          onSubmit={handleCalculateRange}
+          onCancel={() => setShowRangeForm(false)}
         />
       )}
     </div>
