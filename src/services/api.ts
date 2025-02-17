@@ -222,3 +222,15 @@ export const calculatePatternRange = async (
     throw error;
   }
 };
+
+export const getTotalForColumn = async (date: string, jornada: string): Promise<number[]> => {
+  try {
+    const response = await api.get('/patrons/GetTotalForColumn', {
+      params: { date, jornada }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting total for column:', error);
+    throw error;
+  }
+};
