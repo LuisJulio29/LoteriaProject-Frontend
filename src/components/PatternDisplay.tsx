@@ -24,7 +24,6 @@ export default function PatternDisplay({
   onDelete,
   showActions = false,
   redundancyData,
-  onRedundancyClick,
   tickets,
   generatedTickets,
   isLoadingTickets
@@ -91,6 +90,11 @@ export default function PatternDisplay({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
+  const handleRedundancyClick = (pattern: Pattern) => {
+    // Open in a new tab with the pattern's date and jornada
+    const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="space-y-6">
@@ -218,7 +222,7 @@ export default function PatternDisplay({
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.redundancyCount}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <button
-                          onClick={() => onRedundancyClick?.(item.patron)}
+                          onClick={() => handleRedundancyClick?.(item.patron)}
                           className="text-indigo-600 hover:text-indigo-900"
                         >
                           <ExternalLink className="h-5 w-5" />
