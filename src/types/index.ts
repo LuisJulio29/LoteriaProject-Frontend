@@ -13,6 +13,15 @@ export interface Ticket {
   jornada: string;
 }
 
+export interface Sorteo{
+  id: number;
+  number: string;
+  date: string;
+  serie: string;
+  loteria: string;
+  jornada: string;
+}
+
 export interface User {
   token: string;
   role: number;
