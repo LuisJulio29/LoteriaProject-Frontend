@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, addDays } from 'date-fns';
 import { Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -19,10 +19,12 @@ import PatternForm from '../components/PatternForm';
 import PatternRangeForm from '../components/PatternRangeForm';
 import PatternDisplay from '../components/PatternDisplay';
 import Spinner from '../components/Spinner';
+import { useSearchParams } from 'react-router-dom';
 
 export default function PatronesPage() {
-  const [searchDate, setSearchDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [searchJornada, setSearchJornada] = useState('dia');
+  const [searchParams] = useSearchParams();
+  const [searchDate, setSearchDate] = useState(searchParams.get('date') || format(new Date(), 'yyyy-MM-dd'));
+  const [searchJornada, setSearchJornada] = useState(searchParams.get('jornada') || 'dia');
   const [pattern, setPattern] = useState<Pattern | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [showRangeForm, setShowRangeForm] = useState(false);
@@ -33,6 +35,19 @@ export default function PatronesPage() {
   const [generatedTickets, setGeneratedTickets] = useState<any[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
   const isAdmin = localStorage.getItem('role') === '0';
+
+  // Effect to handle URL parameters
+  useEffect(() => {
+    const dateParam = searchParams.get('date');
+    const jornadaParam = searchParams.get('jornada');
+    
+    if (dateParam && jornadaParam) {
+      setSearchDate(dateParam);
+      setSearchJornada(jornadaParam);
+      handleSearch(dateParam, jornadaParam);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const loadRedundancyData = async (pattern: Pattern) => {
     try {
@@ -54,7 +69,6 @@ export default function PatronesPage() {
       let generatedJornada = pattern.jornada;
 
       if (pattern.jornada.toLowerCase() === 'dia') {
-        
         // If pattern is day, get night tickets of same day
         generatedJornada = 'noche';
       } else {
@@ -72,10 +86,10 @@ export default function PatronesPage() {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (date = searchDate, jornada = searchJornada) => {
     setIsLoading(true);
     try {
-      const result = await searchPatterns(searchDate, searchJornada);
+      const result = await searchPatterns(date, jornada);
       setPattern(result);
       await loadRedundancyData(result);
       await loadTickets(result);
@@ -149,12 +163,6 @@ export default function PatronesPage() {
     }
   };
 
-  const handleRedundancyClick = (pattern: Pattern) => {
-    setSearchDate(pattern.date);
-    setSearchJornada(pattern.jornada);
-    handleSearch();
-  };
-
   const handleCalculateRange = async (
     startDate: string,
     startJornada: string,
@@ -221,7 +229,7 @@ export default function PatronesPage() {
           </div>
           <div className="flex items-end">
             <button
-              onClick={handleSearch}
+              onClick={() => handleSearch()}
               disabled={isLoading}
               className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed w-full"
             >
@@ -261,7 +269,6 @@ export default function PatronesPage() {
             onDelete={handleDelete}
             showActions={isAdmin}
             redundancyData={redundancyData}
-            onRedundancyClick={handleRedundancyClick}
             tickets={tickets}
             generatedTickets={generatedTickets}
             isLoadingTickets={isLoadingTickets}
