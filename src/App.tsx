@@ -6,6 +6,7 @@ import LoginForm from './components/LoginForm';
 import TicketList from './components/TicketList';
 import PatronesPage from './pages/PatronesPage';
 import AstroPage from './pages/AstroPage';
+import SorteoList from './components/SorteoList';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('token');
@@ -24,6 +25,16 @@ function App() {
             <PrivateRoute>
               <Layout>
                 <TicketList />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/loterias"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <SorteoList/>
               </Layout>
             </PrivateRoute>
           }
