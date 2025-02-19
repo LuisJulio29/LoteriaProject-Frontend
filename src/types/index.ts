@@ -19,7 +19,6 @@ export interface Sorteo{
   date: string;
   serie: string;
   loteria: string;
-  jornada: string;
 }
 
 export interface User {
