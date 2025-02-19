@@ -7,6 +7,7 @@ import { Ticket } from '../types';
 import TicketForm from './TicketForm';
 import Spinner from './Spinner';
 import React from 'react';
+import { es } from 'date-fns/locale'
 
 export default function TicketList() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -304,7 +305,7 @@ export default function TicketList() {
                   <tr key={ticket.id}>
                     <td className="px-6 py-4 whitespace-nowrap">{ticket.number} {ticket.sign}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {format(new Date(ticket.date), 'dd/MM/yyyy')}
+                      {format(new Date(ticket.date), 'EEEE dd/MM/yyyy',{ locale: es })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
