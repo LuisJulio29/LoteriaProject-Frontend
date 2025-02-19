@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy } from '../types';
-import { Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { Pencil, Trash2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
+import React from 'react';
 
 interface PatternDisplayProps {
   pattern: Pattern;
@@ -38,6 +39,20 @@ export default function PatternDisplay({
   const [isLoadingRedundancy, setIsLoadingRedundancy] = useState(false);
   const [isLoadingVoid, setIsLoadingVoid] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  
+  // Pagination state for concurrency table
+  const [currentConcurrencyPage, setCurrentConcurrencyPage] = useState(1);
+  const itemsPerPage = 10; // Number of items per page for concurrency table
+
+  // Calculate pagination for concurrency table
+  const totalConcurrencyPages = redundancyData ? Math.ceil(redundancyData.length / itemsPerPage) : 0;
+  const startIndex = (currentConcurrencyPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentConcurrencyItems = redundancyData?.slice(startIndex, endIndex) || [];
+
+  const handleConcurrencyPageChange = (page: number) => {
+    setCurrentConcurrencyPage(page);
+  };
 
   useEffect(() => {
     loadAnalysisData();
@@ -90,6 +105,7 @@ export default function PatternDisplay({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
+
   const handleRedundancyClick = (pattern: Pattern) => {
     // Open in a new tab with the pattern's date and jornada
     const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
@@ -189,7 +205,7 @@ export default function PatternDisplay({
         </div>
       </div>
 
-      {/* Concurrency Table */}
+      {/* Concurrency Table with Pagination */}
       {redundancyData && (
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
           <h3 className="text-lg font-semibold mb-4">Concurrencia</h3>
@@ -213,7 +229,7 @@ export default function PatternDisplay({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {redundancyData.map((item, index) => (
+                  {currentConcurrencyItems.map((item, index) => (
                     <tr key={index}>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
                         {new Date(item.patron.date).toLocaleDateString()}
@@ -232,6 +248,84 @@ export default function PatternDisplay({
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="px-3 sm:px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-4">
+            <div className="flex-1 flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">{startIndex + 1}</span>{' '}
+                  hasta{' '}
+                  <span className="font-medium">
+                    {Math.min(endIndex, redundancyData.length)}
+                  </span>{' '}
+                  de{' '}
+                  <span className="font-medium">{redundancyData.length}</span>{' '}
+                  resultados
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleConcurrencyPageChange(currentConcurrencyPage - 1)}
+                  disabled={currentConcurrencyPage === 1}
+                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
+                </button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalConcurrencyPages }, (_, i) => i + 1)
+                    .filter(page => {
+                      return (
+                        page === 1 ||
+                        page === totalConcurrencyPages ||
+                        Math.abs(page - currentConcurrencyPage) <= 1
+                      );
+                    })
+                    .map((page, index, array) => {
+                      if (index > 0 && page - array[index - 1] > 1) {
+                        return (
+                          <React.Fragment key={`ellipsis-${page}`}>
+                            <span className="px-3 py-1 text-gray-500">...</span>
+                            <button
+                              onClick={() => handleConcurrencyPageChange(page)}
+                              className={`px-3 py-1 rounded-md ${
+                                currentConcurrencyPage === page
+                                  ? 'bg-indigo-600 text-white'
+                                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        );
+                      }
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => handleConcurrencyPageChange(page)}
+                          className={`px-3 py-1 rounded-md ${
+                            currentConcurrencyPage === page
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
+                </div>
+                <button
+                  onClick={() => handleConcurrencyPageChange(currentConcurrencyPage + 1)}
+                  disabled={currentConcurrencyPage === totalConcurrencyPages}
+                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Siguiente
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
