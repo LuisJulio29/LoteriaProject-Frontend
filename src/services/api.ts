@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { AstroPatron, PatronRedundancy, Pattern, Ticket } from '../types';
-
+import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo } from '../types';
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
 });
@@ -23,11 +22,33 @@ export const getTickets = async () => {
   return response.data;
 };
 
+export const getSorteos = async () => {
+  const response = await api.get('/Sorteos');
+  return response.data;
+};
+
 export const searchTickets = async (Number: string) => {
   const response = await api.get(`/Tickets/GetTicketByNumber/${Number}`);
   return response.data;
 };
 
+export const searchSorteos = async (Number?: string, Serie?: string) => {
+  let url = '/Sorteos/GetSorteoByNumber';
+  const params = new URLSearchParams();
+  
+  if (Number) {
+      params.append('number', Number);
+  }
+  if (Serie) {
+      params.append('serie', Serie);
+  }
+  const queryString = params.toString();
+  if (queryString) {
+      url += `?${queryString}`;
+  }
+  const response = await api.get(url);
+  return response.data;
+}
 export const getTicketsByDate = async (date: string, jornada: string) => {
   try {
     const response = await api.get('/Tickets/GetTicketByDate', {
@@ -57,9 +78,13 @@ export const getAstroTicketsByDate = async (date: string, jornada: string) => {
   }
 };
 
-
 export const createTicket = async (ticket: Omit<Ticket, 'id'>) => {
   const response = await api.post('/tickets', ticket);
+  return response.data;
+};
+
+export const createSorteo = async (sorteo: Omit<Sorteo, 'id'>) => {
+  const response = await api.post('/Sorteos', sorteo);
   return response.data;
 };
 
@@ -69,6 +94,15 @@ export const updateTicket = async (id: number, ticket: Omit<Ticket, 'id'>) => {
     ...ticket
   };
   const response = await api.put(`/tickets/${id}`, ticketWithId);
+  return response.data;
+};
+
+export const updateSorteo = async (id: number, sorteo: Omit<Sorteo, 'id'>) => {
+  const sorteoWithId = {
+    id: id,
+    ...sorteo
+  };
+  const response = await api.put(`/Sorteos/${id}`, sorteoWithId);
   return response.data;
 };
 
@@ -83,6 +117,11 @@ export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) =>
 
 export const deleteTicket = async (id: number) => {
   const response = await api.delete(`/tickets/${id}`);
+  return response.data;
+};
+
+export const deleteSorteo = async (id: number) => {
+  const response = await api.delete(`/Sorteos/${id}`);
   return response.data;
 };
 
