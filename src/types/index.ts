@@ -37,6 +37,16 @@ export interface PatronRedundancy {
   patron: Pattern;
   redundancyCount: number;
 }
+export interface SorteoPattern {
+  id?: number;
+  date: string;
+  patronNumbers: number[];
+}
+
+export interface SorteoPatronRedundancy {
+  sorteoPatron: SorteoPattern;
+  redundancyCount: number;
+}
 
 export enum AstroSign {
   Aries = 1,
