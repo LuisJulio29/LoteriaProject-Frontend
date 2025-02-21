@@ -48,12 +48,12 @@ export default function PatternForm({ onSubmit, initialData, onCancel }: Pattern
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
         <div className="p-6">
           <h3 className="text-lg font-semibold mb-4">
-            {initialData ? 'Edit Pattern' : 'Add New Pattern'}
+            {initialData ? 'Editar Patron' : 'Añadir Nuevo Patron'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Date</label>
+                <label className="block text-sm font-medium text-gray-700">Fecha</label>
                 <input
                   type="date"
                   value={formData.date}
@@ -79,11 +79,11 @@ export default function PatternForm({ onSubmit, initialData, onCancel }: Pattern
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Numbers</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Patron</label>
               <div className="grid grid-cols-5 gap-2">
                 {formData.patronNumbers.map((number, index) => (
                   <div key={index}>
-                    <label className="block text-xs text-gray-500 mb-1">Number {index}</label>
+                    <label className="block text-xs text-gray-500 mb-1">Numero {index}</label>
                     <input
                       type="number"
                       min="0"
@@ -105,7 +105,7 @@ export default function PatternForm({ onSubmit, initialData, onCancel }: Pattern
                 disabled={isSubmitting}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
@@ -115,10 +115,10 @@ export default function PatternForm({ onSubmit, initialData, onCancel }: Pattern
                 {isSubmitting ? (
                   <>
                     <Spinner className="h-4 w-4 mr-2" />
-                    {initialData ? 'Updating...' : 'Creating...'}
+                    {initialData ? 'Actualizando...' : 'Creando...'}
                   </>
                 ) : (
-                  initialData ? 'Update' : 'Create'
+                  initialData ? 'Actualizar' : 'Crear'
                 )}
               </button>
             </div>
