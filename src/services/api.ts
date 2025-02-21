@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo } from '../types';
+import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy } from '../types';
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
 });
@@ -63,6 +63,19 @@ export const getTicketsByDate = async (date: string, jornada: string) => {
     throw error;
   }
 };
+export const getSorteosByDate = async (date: string) => {
+  try {
+    const response = await api.get('/Sorteos/GetsorteoByDate', {
+      params: {
+        date
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting sorteo by date:', error);
+    throw error;
+  }
+};
 export const getAstroTicketsByDate = async (date: string, jornada: string) => {
   try {
     const response = await api.get('/Tickets/GetAstroTicketByDate', {
@@ -106,15 +119,6 @@ export const updateSorteo = async (id: number, sorteo: Omit<Sorteo, 'id'>) => {
   return response.data;
 };
 
-export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
-  const patternWithId = {
-    id: id,
-    ...pattern
-  };
-  const response = await api.put(`/patrons/${id}`, patternWithId);
-  return response.data;
-};
-
 export const deleteTicket = async (id: number) => {
   const response = await api.delete(`/tickets/${id}`);
   return response.data;
@@ -141,16 +145,58 @@ export const searchPatterns = async (date: string, jornada: string): Promise<Pat
   }
 };
 
+export const SearchSorteoPatterns = async(date:string): Promise<SorteoPattern> =>
+{
+  try{
+    const response = await api.get('/SorteoPatrons/Search',{
+      params:{
+        date:date
+      }
+    });
+    return response.data;
+  }catch(error){
+    console.error('Error searching Sorteo Patterns:',error);
+    throw error;
+  }
+}
+
 export const createPattern = async (pattern: Omit<Pattern, 'id'>) => {
   const response = await api.post('/patrons', pattern);
   return response.data;
 };
 
+export const createSorteoPattern = async (sorteoPattern: Omit<SorteoPattern, 'id'>) => {
+  const response = await api.post('/SorteoPatrons', sorteoPattern);
+  return response.data;
+};
+
+export const updatePattern = async (id: number, pattern: Omit<Pattern, 'id'>) => {
+  const patternWithId = {
+    id: id,
+    ...pattern
+  };
+  const response = await api.put(`/patrons/${id}`, patternWithId);
+  return response.data;
+};
+
+export const updateSorteoPattern = async (id: number, sorteoPattern: Omit<SorteoPattern, 'id'>) => {
+  const sorteoPatternWithId = {
+    id: id,
+    ...sorteoPattern
+  };
+  const response = await api.put(`/SorteoPatrons/${id}`, sorteoPatternWithId);
+  return response.data;
+}
 
 export const deletePattern = async (id: number) => {
   const response = await api.delete(`/patrons/${id}`);
   return response.data;
 };
+
+export const deleteSorteoPattern = async (id: number) => {
+  const response = await api.delete(`/SorteoPatrons/${id}`);
+  return response.data;
+}
 
 export const calculatePattern = async (date: string, jornada: string): Promise<Pattern> => {
   try {
@@ -162,6 +208,16 @@ export const calculatePattern = async (date: string, jornada: string): Promise<P
   }
 };
 
+export const calculateSorteoPattern = async (date: string): Promise<SorteoPattern> => {
+  try {
+    const response = await api.post(`/SorteoPatrons/Calculate?date=${date}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating sorteo pattern:', error);
+    throw error;
+  }
+}
+
 export const calculateRedundancy = async (pattern: Pattern): Promise<PatronRedundancy[]> => {
   try {
     const response = await api.post('/patrons/CalculateRedundancy', pattern);
@@ -171,6 +227,16 @@ export const calculateRedundancy = async (pattern: Pattern): Promise<PatronRedun
     throw error;
   }
 };
+
+export const calculateSorteoRedundancy = async (sorteoPattern: SorteoPattern): Promise<SorteoPatronRedundancy[]> => {
+  try {
+    const response = await api.post('/sorteopatrons/CalculateRedundancy', sorteoPattern);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating sorteo redundancy:', error);
+    throw error;
+  }
+}
 
 export const getAstroPatronByDate = async (date: string, jornada: string): Promise<AstroPatron> => {
   try {
@@ -209,6 +275,18 @@ export const getRedundancyInDate = async (date: string): Promise<Pattern[]> => {
   }
 };
 
+export const getSorteoRedundancyInDate = async (date: string): Promise<SorteoPattern[]> => {
+  try {
+    const response = await api.get('/SorteoPatrons/GetRedundancyinDate', {
+      params: { date }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting redundancy in date:', error);
+    throw error;
+  }
+}
+
 export const getNumbersNotPlayed = async (date: string, jornada: string): Promise<string[]> => {
   try {
     const response = await api.get('/patrons/GetNumbersNotPlayed', {
@@ -221,6 +299,18 @@ export const getNumbersNotPlayed = async (date: string, jornada: string): Promis
   }
 };
 
+export const getSorteoNumbersNotPlayed = async (date: string): Promise<string[]> => {
+  try {
+    const response = await api.get('/SorteoPatrons/GetNumbersNotPlayed', {
+      params: { date }
+    });
+    return response.data;
+  }
+  catch (error) {
+    console.error('Error getting numbers not played:', error);
+    throw error;
+  }
+}
 export const getVoidInDay = async (id: number): Promise<Pattern[]> => {
   try {
     const response = await api.get(`/patrons/GetVoidinDay/${id}`);
@@ -230,6 +320,16 @@ export const getVoidInDay = async (id: number): Promise<Pattern[]> => {
     throw error;
   }
 };
+
+export const getSorteoVoidInDay = async (id: number): Promise<SorteoPattern[]> => {
+  try {
+    const response = await api.get(`/SorteoPatrons/GetVoidinDay/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting void in day:', error);
+    throw error;
+  }
+}
 
 export const uploadTickets = async (file: File) => {
   const formData = new FormData();
@@ -262,6 +362,16 @@ export const calculatePatternRange = async (
   }
 };
 
+export const calculateSorteoPatternRange = async (startDate: string, endDate: string) => {
+  try {
+    const response = await api.post(`/SorteoPatrons/CalculateRange?dateInit=${startDate}&dateFinal=${endDate}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error calculating sorteo pattern range:', error);
+    throw error;
+  }
+}
+
 export const getTotalForColumn = async (date: string, jornada: string): Promise<number[]> => {
   try {
     const response = await api.get('/patrons/GetTotalForColumn', {
@@ -273,3 +383,15 @@ export const getTotalForColumn = async (date: string, jornada: string): Promise<
     throw error;
   }
 };
+
+export const getSorteoTotalForColumn = async (date: string): Promise<number[]> => {
+  try {
+    const response = await api.get('/SorteoPatrons/GetTotalForColumn', {
+      params: { date }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting total for column:', error);
+    throw error;
+  }
+}
