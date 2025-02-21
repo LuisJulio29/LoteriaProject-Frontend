@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy } from '../types';
-import { Pencil, Trash2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import React from 'react';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 interface PatternDisplayProps {
   pattern: Pattern;
@@ -22,12 +23,12 @@ interface PatternDisplayProps {
 export default function PatternDisplay({
   pattern,
   onEdit,
-  onDelete,
+  onDelete = () => {},
   showActions = false,
   redundancyData,
   tickets,
   generatedTickets,
-  isLoadingTickets
+  isLoadingTickets = false
 }: PatternDisplayProps) {
   const isAdmin = localStorage.getItem('role') === '0';
   const maxValue = Math.max(...pattern.patronNumbers);
@@ -134,12 +135,11 @@ export default function PatternDisplay({
               >
                 <Pencil className="h-5 w-5" />
               </button>
-              <button
-                onClick={onDelete}
-                className="text-red-600 hover:text-red-900"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              <DeleteConfirmationModal 
+            onDelete={onDelete}
+            isLoading={isLoadingTickets}
+            itemType="Patrón"
+                  />
             </div>
           )}
         </div>

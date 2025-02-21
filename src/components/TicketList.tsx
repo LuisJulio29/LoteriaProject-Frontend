@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import { Pencil, Trash2, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
+import { Pencil, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getTickets, createTicket, updateTicket, deleteTicket, searchTickets, uploadTickets } from '../services/api';
 import { Ticket } from '../types';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import TicketForm from './TicketForm';
 import Spinner from './Spinner';
 import React from 'react';
@@ -104,15 +105,15 @@ export default function TicketList() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Estas seguro de eliminar este Chance?')) return;
     setIsLoading(true);
     try {
       await deleteTicket(id);
       toast.success('Chance Eliminado Correctamente');
       loadTickets();
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('Error al eliminar el Chance');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -319,13 +320,11 @@ export default function TicketList() {
                           >
                             <Pencil className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(ticket.id)}
-                            className="text-red-600 hover:text-red-900"
-                            disabled={isLoading}
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </button>
+                          <DeleteConfirmationModal 
+                            onDelete={() => handleDelete(ticket.id)}
+                            isLoading={isLoading}
+                            itemType="Chance"
+                          />
                         </div>
                       </td>
                     )}

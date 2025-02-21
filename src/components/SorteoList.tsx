@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import { Pencil, Trash2, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
+import { Pencil, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getSorteos,createSorteo,updateSorteo,deleteSorteo,searchSorteos, } from '../services/api';
 import { uploadTickets } from '../services/api';
@@ -9,6 +9,7 @@ import { Sorteo} from '../types';
 import SorteoForm from './SorteoForm';
 import Spinner from './Spinner';
 import React from 'react';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 export default function TicketList() {
   const [sorteos, setSorteos] = useState<Sorteo[]>([]);
@@ -107,14 +108,14 @@ export default function TicketList() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Estas seguro de eliminar este Sorteo?')) return;
     setIsLoading(true);
     try {
       await deleteSorteo(id);
-      toast.success('Sorteo Eliminado Correctamente');
+      toast.success('Chance Eliminado Correctamente');
       loadSorteos();
     } catch (error) {
-      toast.error('Error al eliminar el Sorteo');
+      toast.error('Error al eliminar el Chance');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -319,13 +320,11 @@ export default function TicketList() {
                           >
                             <Pencil className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(sorteo.id)}
-                            className="text-red-600 hover:text-red-900"
-                            disabled={isLoading}
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </button>
+                          <DeleteConfirmationModal 
+                            onDelete={() => handleDelete(sorteo.id)}
+                            isLoading={isLoading}
+                            itemType="Chance"
+                          />
                         </div>
                       </td>
                     )}

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import {SorteoPattern, SorteoPatronRedundancy } from '../types';
-import { Pencil, Trash2, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getSorteoRedundancyInDate, getSorteoNumbersNotPlayed, getSorteoVoidInDay, getSorteoTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import React from 'react';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 interface SorteoPatternDisplayProps {
   Sorteopattern: SorteoPattern;
@@ -22,12 +23,12 @@ interface SorteoPatternDisplayProps {
 export default function SorteoPatternDisplay({
   Sorteopattern,
   onEdit,
-  onDelete,
+  onDelete = () => {},
   showActions = false,
   redundancyData,
   Sorteos,
   generatedSorteos,
-  isLoadingSorteos
+  isLoadingSorteos=false,
 }: SorteoPatternDisplayProps) {
   const isAdmin = localStorage.getItem('role') === '0';
   const maxValue = Math.max(...Sorteopattern.patronNumbers);
@@ -132,12 +133,11 @@ export default function SorteoPatternDisplay({
               >
                 <Pencil className="h-5 w-5" />
               </button>
-              <button
-                onClick={onDelete}
-                className="text-red-600 hover:text-red-900"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              <DeleteConfirmationModal 
+              onDelete={onDelete}
+              isLoading={isLoadingSorteos}
+              itemType="Patrón"
+                  />
             </div>
           )}
         </div>

@@ -122,15 +122,18 @@ export default function PatronesPage() {
   };
 
   const handleDelete = async () => {
-    if (!SorteoPattern || !window.confirm('Estás Seguro que Quieres eliminar este Patron?')) return;
     setIsLoading(true);
     try {
-      await deleteSorteoPattern(SorteoPattern.id!);
-      toast.success('Patron eliminado exitosamente');
-      setSorteoPattern(null);
-      setRedundancyData([]);
-      setSorteos([]);
-      setGeneratedSorteos([]);
+      if (SorteoPattern) {
+        await deleteSorteoPattern(SorteoPattern.id!);
+        toast.success('Patron eliminado exitosamente');
+        setSorteoPattern(null);
+        setRedundancyData([]);
+        setSorteos([]);
+        setGeneratedSorteos([]);
+      } else {
+        toast.error('No hay patron para eliminar');
+      }
     } catch (error) {
       toast.error('Error al eliminar patron');
     } finally {

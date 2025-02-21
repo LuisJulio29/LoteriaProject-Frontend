@@ -147,10 +147,13 @@ export default function PatronesPage() {
   };
 
   const handleDelete = async () => {
-    if (!pattern || !window.confirm('Estás Seguro que Quieres eliminar este Patron?')) return;
     setIsLoading(true);
     try {
-      await deletePattern(pattern.id!);
+      if (!pattern?.id) {
+        toast.error('No hay patrón seleccionado para eliminar');
+        return;
+      }
+      await deletePattern(pattern.id);
       toast.success('Patron eliminado exitosamente');
       setPattern(null);
       setRedundancyData([]);
