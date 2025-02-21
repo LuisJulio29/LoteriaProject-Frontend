@@ -4,12 +4,13 @@ import { format } from 'date-fns';
 import { Pencil, Plus, Search, RotateCw, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getSorteos,createSorteo,updateSorteo,deleteSorteo,searchSorteos, } from '../services/api';
-import { uploadTickets } from '../services/api';
+import {uploadSorteos } from '../services/api';
 import { Sorteo} from '../types';
 import SorteoForm from './SorteoForm';
 import Spinner from './Spinner';
 import React from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import { es } from 'date-fns/locale';
 
 export default function TicketList() {
   const [sorteos, setSorteos] = useState<Sorteo[]>([]);
@@ -125,12 +126,12 @@ export default function TicketList() {
     if (!file) return;
     setIsUploading(true);
     try {
-      await uploadTickets(file);
-      toast.success('Tickets subidos exitosamente');
+      await uploadSorteos(file);
+      toast.success('Sorteos subidos exitosamente');
       handleReload(); // Refresh the ticket list after successful upload
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al subir tickets');
+      toast.error(error.response?.data?.message || 'Error al subir Sorteos');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -307,7 +308,7 @@ export default function TicketList() {
                     <td className="px-6 py-4 whitespace-nowrap">{sorteo.number}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{sorteo.serie}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {format(new Date(sorteo.date), 'dd/MM/yyyy')}
+                      {format(new Date(sorteo.date), 'dd/MM/yyyy EEEE',{ locale: es })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{sorteo.loteria}</td>
                     {isAdmin && (

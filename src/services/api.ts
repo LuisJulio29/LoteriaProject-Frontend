@@ -346,6 +346,21 @@ export const uploadTickets = async (file: File) => {
     throw error;
   }
 };
+export const uploadSorteos = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const response = await api.post('/sorteos/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading sorteos:', error);
+    throw error;
+  }
+};
 
 export const calculatePatternRange = async (
   startDate: string,
