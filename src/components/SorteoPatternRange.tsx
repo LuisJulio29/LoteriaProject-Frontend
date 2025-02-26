@@ -31,9 +31,9 @@ export default function PatternRangeForm({ onSubmit, onCancel }: PatternRangeFor
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg">
         <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Calcular Rango de Patrones</h3>
+          <h3 className="text-lg text-center font-semibold mb-4">Calcular Rango de Patrones</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 ml-4 mr-4 shadow-md px-4 py-5 sm:rounded-lg sm:p-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Fecha Inicial</label>
                 <input
@@ -47,7 +47,7 @@ export default function PatternRangeForm({ onSubmit, onCancel }: PatternRangeFor
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 ml-4 mr-4 shadow-md px-4 py-5 sm:rounded-lg sm:p-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Fecha Final</label>
                 <input

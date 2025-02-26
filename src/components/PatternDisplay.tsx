@@ -120,10 +120,15 @@ export default function PatternDisplay({
         <div className="flex flex-col sm:flex-row justify-between items-start mb-4">
           <div>
             <h3 className="text-lg font-semibold">Resultados del Patron</h3>
-            <p className="text-sm text-gray-600">
-              Fecha: {new Date(pattern.date).toLocaleDateString()}
+            <p className="text-md text-gray-600">
+              Fecha: {new Date(pattern.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-md text-gray-600">
               Jornada: {pattern.jornada}
             </p>
           </div>
@@ -231,9 +236,14 @@ export default function PatternDisplay({
                 <tbody className="bg-white divide-y divide-gray-200">
                   {currentConcurrencyItems.map((item, index) => (
                     <tr key={index}>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
-                        {new Date(item.patron.date).toLocaleDateString()}
-                      </td>
+                       <td className="px-6 py-4 whitespace-nowrap">
+                          {new Date(item.patron.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                        </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.patron.jornada}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.redundancyCount}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -491,9 +501,14 @@ export default function PatternDisplay({
                 <tbody className="bg-white divide-y divide-gray-200">
                   {voidPatterns.map((pattern, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {new Date(pattern.date).toLocaleDateString()}
-                      </td>
+                     <td className="px-6 py-4 whitespace-nowrap">
+                          {new Date(pattern.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                        </td>
                       <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
