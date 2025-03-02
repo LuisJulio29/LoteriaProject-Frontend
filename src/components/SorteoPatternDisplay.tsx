@@ -227,7 +227,12 @@ export default function SorteoPatternDisplay({
                   {currentConcurrencyItems.map((item, index) => (
                     <tr key={index}>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
-                        {new Date(item.sorteoPatron.date).toLocaleDateString()}
+                        {new Date(item.sorteoPatron.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.redundancyCount}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -435,7 +440,12 @@ export default function SorteoPatternDisplay({
                   {redundancyInDate.map((Sorteopattern, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {new Date(Sorteopattern.date).toLocaleDateString()}
+                        {new Date(Sorteopattern.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
@@ -479,7 +489,12 @@ export default function SorteoPatternDisplay({
                   {voidPatterns.map((Sorteopattern, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {new Date(Sorteopattern.date).toLocaleDateString()}
+                        {new Date(Sorteopattern.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
