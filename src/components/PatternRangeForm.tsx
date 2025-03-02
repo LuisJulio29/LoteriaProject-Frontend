@@ -13,7 +13,7 @@ export default function PatternRangeForm({ onSubmit, onCancel }: PatternRangeFor
     startDate: format(new Date(), 'yyyy-MM-dd'),
     startJornada: 'dia',
     endDate: format(new Date(), 'yyyy-MM-dd'),
-    endJornada: 'dia',
+    endJornada: 'noche',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
