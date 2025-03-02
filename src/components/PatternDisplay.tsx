@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy } from '../types';
-import { Pencil, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, ExternalLink, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import React from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import PatternRedundancyModal from './PatternRedundancyModal';
 
 interface PatternDisplayProps {
   pattern: Pattern;
@@ -40,6 +41,10 @@ export default function PatternDisplay({
   const [isLoadingRedundancy, setIsLoadingRedundancy] = useState(false);
   const [isLoadingVoid, setIsLoadingVoid] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  
+  // Modal state
+  const [isRedundancyModalOpen, setIsRedundancyModalOpen] = useState(false);
+  const [selectedPatterns, setSelectedPatterns] = useState<{patron1Id?: number, patron2Id?: number}>({});
   
   // Pagination state for concurrency table
   const [currentConcurrencyPage, setCurrentConcurrencyPage] = useState(1);
@@ -111,6 +116,14 @@ export default function PatternDisplay({
     // Open in a new tab with the pattern's date and jornada
     const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
     window.open(url, '_blank');
+  };
+
+  const handleRedundancyAnalysisClick = (patronItem: PatronRedundancy) => {
+    setSelectedPatterns({
+      patron2Id: pattern.id,
+      patron1Id: patronItem.patron.id
+    });
+    setIsRedundancyModalOpen(true);
   };
 
   return (
@@ -229,7 +242,7 @@ export default function PatternDisplay({
                       Contador
                     </th>
                     <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ver más
+                      Acciones
                     </th>
                   </tr>
                 </thead>
@@ -247,12 +260,22 @@ export default function PatternDisplay({
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.patron.jornada}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">{item.redundancyCount}</td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => handleRedundancyClick?.(item.patron)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          <ExternalLink className="h-5 w-5" />
-                        </button>
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => handleRedundancyClick(item.patron)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            title="Ver detalles del patrón"
+                          >
+                            <ExternalLink className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={() => handleRedundancyAnalysisClick(item)}
+                            className="text-emerald-600 hover:text-emerald-900"
+                            title="Analizar redundancia"
+                          >
+                            <BarChart2 className="h-5 w-5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -530,6 +553,13 @@ export default function PatternDisplay({
           )
         )}
       </div>
+       {/* Integración del Modal de Análisis de Redundancia */}
+       <PatternRedundancyModal
+        isOpen={isRedundancyModalOpen}
+        onClose={() => setIsRedundancyModalOpen(false)}
+        patron1Id={selectedPatterns.patron1Id}
+        patron2Id={selectedPatterns.patron2Id}
+      />
     </div>
   );
 }
