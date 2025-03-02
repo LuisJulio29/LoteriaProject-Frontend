@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { KeyRound, User } from 'lucide-react';
+import { KeyRound, User, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { login } from '../services/api';
 import Spinner from './Spinner';
@@ -9,6 +9,7 @@ export default function LoginForm() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,23 +20,27 @@ export default function LoginForm() {
       if (response.isSuccess) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.roles.toString());
-        toast.success('Inicio de Seccion Exitoso!');
+        toast.success('Inicio de Sesión Exitoso!');
         navigate('/tickets');
       } else {
-        toast.error('Credeciales Incorrectas');
+        toast.error('Credenciales Incorrectas');
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error('Inicio de seccion fallido');
+      toast.error('Inicio de sesión fallido');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-10 rounded-lg shadow-md w-1/2 h-1/2">
-        <h2 className="text-2xl font-bold text-center mb-10">Iniciar Sesion</h2>
+        <h2 className="text-2xl font-bold text-center mb-10">Iniciar Sesión</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Usuario</label>
@@ -60,13 +65,24 @@ export default function LoginForm() {
                 <KeyRound className="h-5 w-5 text-gray-400" />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 py-2 block w-full rounded-md border-gray-300 shadow-md focus:ring-indigo-500 focus:border-indigo-500"
                 required
                 disabled={isLoading}
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <Eye className="h-5 w-5 text-gray-400" />
+                )}
+              </button>
             </div>
           </div>
           <button
