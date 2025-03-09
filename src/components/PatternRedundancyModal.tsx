@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Ticket } from '../types';
+import { Pattern, Ticket } from '../types';
 import Spinner from './Spinner';
 import { X } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface PatternRedundancyModalProps {
 }
 
 interface RedundancyAnalysisResult {
+  patron : Pattern;
   numbersToSearch: number[];
   ticketsCon4Coincidencias: Ticket[];
   ticketsCon3Coincidencias: Ticket[];
@@ -60,7 +61,12 @@ export default function PatternRedundancyModal({
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Análisis de Redundancia entre Patrones</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{data && new Date(data.patron.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })} / {data?.patron.jornada}</h2>
           <button 
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500 focus:outline-none"
