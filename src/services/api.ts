@@ -12,6 +12,11 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const Register = async (userName:string, password:string) => {
+  const response = await api.post('/Users/Register',{userName,password});
+  return response.data;
+}
+
 export const login = async (userName: string, password: string) => {
   const response = await api.post('/Users/Login', { userName, password });
   return response.data;
