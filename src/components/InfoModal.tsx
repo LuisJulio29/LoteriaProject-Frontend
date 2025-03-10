@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Dialog,
@@ -45,6 +45,24 @@ const LotterySchedule: React.FC<LotteryScheduleProps> = ({ name, schedules }) =>
 };
 
 const InfoModal: React.FC = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar si es un dispositivo móvil basado en el ancho de la pantalla
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // Consideramos móvil si es menor o igual a 768px
+    };
+
+    // Comprobar inicialmente
+    checkIfMobile();
+
+    // Escuchar cambios de tamaño de ventana
+    window.addEventListener('resize', checkIfMobile);
+
+    // Limpiar el event listener
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   const lotterySchedules: LotteryScheduleProps[] = [
     {
       name: "Antioqueñita",
@@ -139,16 +157,15 @@ const InfoModal: React.FC = () => {
           "Noche" :"Lunes a Sábado 9:30 PM - Domingos y Festivos 8:00 PM"
         }
     },
-    
-    
   ];
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="p-2 rounded-full hover:bg-gray-100">
+        <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded">
           <HelpCircle className="h-6 w-6 text-gray-700" />
-        </button>
+          {isMobile && <span>Información</span>}
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -169,7 +186,7 @@ const InfoModal: React.FC = () => {
             <div>
               <h4 className="font-semibold">Domingos y Festivos</h4>
               <ul className="pl-5 list-disc">
-                <li>Día = 9 Chances</li>
+                <li>Día = 8 Chances</li>
                 <li>Noche = 12 Chances</li>
               </ul>
             </div>
