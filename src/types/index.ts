@@ -33,6 +33,11 @@ export interface Pattern {
   patronNumbers: number[];
 }
 
+export interface PatronForVoid {
+  patron: Pattern;
+  redundancyNumbers: number[];
+}
+
 export interface PatronRedundancy {
   patron: Pattern;
   redundancyCount: number;
