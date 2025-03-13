@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy } from '../types';
+import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy, PatronForVoid } from '../types';
 const api = axios.create({
   baseURL: 'https://localhost:7267/api',
 });
@@ -316,7 +316,7 @@ export const getSorteoNumbersNotPlayed = async (date: string): Promise<string[]>
     throw error;
   }
 }
-export const getVoidInDay = async (id: number): Promise<Pattern[]> => {
+export const getVoidInDay = async (id: number): Promise<PatronForVoid[]> => {
   try {
     const response = await api.get(`/patrons/GetVoidinDay/${id}`);
     return response.data;
