@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
-import { Pattern, PatronRedundancy } from '../types';
+import { Pattern, PatronRedundancy, PatronForVoid } from '../types';
 import { Pencil, ExternalLink, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
@@ -37,7 +37,7 @@ export default function PatternDisplay({
   const [numbersNotPlayed, setNumbersNotPlayed] = useState<string[]>([]);
   const [columnTotals, setColumnTotals] = useState<number[]>([]);
   const [redundancyInDate, setRedundancyInDate] = useState<Pattern[]>([]);
-  const [voidPatterns, setVoidPatterns] = useState<Pattern[]>([]);
+  const [voidPatterns, setVoidPatterns] = useState<PatronForVoid[]>([]);
   const [isLoadingRedundancy, setIsLoadingRedundancy] = useState(false);
   const [isLoadingVoid, setIsLoadingVoid] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
@@ -519,29 +519,41 @@ export default function PatternDisplay({
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Numeros del Patron
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Redundancia
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {voidPatterns.map((pattern, index) => (
+                  
+                  {voidPatterns.map((data, index) => (
                     <tr key={index}>
                      <td className="px-6 py-4 whitespace-nowrap">
-                          {new Date(pattern.date).toLocaleDateString('es-ES', {
+                     {new Date(data.patron.date).toLocaleDateString('es-ES', {
                             weekday: 'long',
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric'
                           })}
                         </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{data.patron.jornada}</td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {pattern.patronNumbers.map((num, idx) => (
+                          {data.patron.patronNumbers.map((num, idx) => (
                             <span
                               key={idx}
                               className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
-                            >
-                              {num}
-                            </span>
+                            >{num}</span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {data.redundancyNumbers.map((num, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                            >{num}</span>
                           ))}
                         </div>
                       </td>
