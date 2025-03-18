@@ -17,7 +17,9 @@ interface PatternDisplayProps {
   redundancyData?: PatronRedundancy[];
   onRedundancyClick?: (pattern: Pattern) => void;
   tickets?: { number: string; date: string; loteria: string; jornada: string; sign: string }[];
+  sorteos?: { number: string; date: string; serie: string; loteria: string;  }[];
   generatedTickets?: { number: string; date: string; loteria: string; jornada: string; sign: string }[];
+  generatedSorteos?: { number: string; date: string; serie: string; loteria: string;  }[];
   isLoadingTickets?: boolean;
 }
 
@@ -28,6 +30,8 @@ export default function PatternDisplay({
   showActions = false,
   redundancyData,
   tickets,
+  sorteos,
+  generatedSorteos,
   generatedTickets,
   isLoadingTickets = false
 }: PatternDisplayProps) {
@@ -412,12 +416,15 @@ export default function PatternDisplay({
         </div>
 
         {(activeTab === 'generators' || activeTab === 'generated') && (
-          isLoadingTickets ? (
-            <div className="flex justify-center items-center py-8">
-              <Spinner className="h-8 w-8 text-indigo-600" />
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
+        isLoadingTickets ? (
+          <div className="flex justify-center items-center py-8">
+            <Spinner className="h-8 w-8 text-indigo-600" />
+          </div>
+        ) : (
+          <>
+            {/* Tabla de Tickets */}
+            <div className="overflow-x-auto mb-8">
+              <h3 className="text-lg font-bold mb-2 text-center">Chances</h3>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -449,8 +456,43 @@ export default function PatternDisplay({
                 </tbody>
               </table>
             </div>
-          )
-        )}
+            {/* Tabla de Sorteos */}
+            <div className="overflow-x-auto">
+              <h3 className="text-lg font-bold mb-2 text-center">Loterias</h3>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Numero
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Serie
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Loteria
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {(activeTab === 'generators' ? sorteos : generatedSorteos)?.map((sorteo, index) => (
+                    <tr key={index}>
+                      <td className="px-6 py-4 whitespace-nowrap">{sorteo.number}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{sorteo.serie}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {new Date(sorteo.date).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{sorteo.loteria}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )
+      )}
 
         {activeTab === 'redundancy' && (
           isLoadingRedundancy ? (
