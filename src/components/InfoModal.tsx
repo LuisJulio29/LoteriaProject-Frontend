@@ -174,13 +174,19 @@ const InfoModal: React.FC = () => {
         
         <div className="mt-2">
           <h3 className="font-bold text-lg text-center">Chances</h3>
-          
           <div className="mt-2 space-y-2">
             <div>
-              <h4 className="font-semibold">De Lunes a Sábado</h4>
+              <h4 className="font-semibold">De Lunes a Viernes</h4>
               <ul className="pl-5 list-disc">
                 <li>Día = 15 Chances</li>
                 <li>Noche = 9 Chances</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold">Sabados</h4>
+              <ul className="pl-5 list-disc">
+                <li>Día = 14 Chances</li>
+                <li>Noche = 12 Chances</li>
               </ul>
             </div>
             <div>
@@ -195,9 +201,7 @@ const InfoModal: React.FC = () => {
         <div>
               <h4 className="font-semibold">Excepciones</h4>
               <ul className="pl-5 list-disc">
-                <li>Sábado Día = 14 Chances</li>
                 <li>Jueves Noche = 10 Chances</li>
-                <li>Sábado Noche = 12 Chances</li>
               </ul>
          </div>
         
