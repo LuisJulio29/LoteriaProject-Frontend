@@ -12,7 +12,8 @@ import {
   calculatePattern,
   calculateRedundancy,
   getTicketsByDate,
-  calculatePatternRange
+  calculatePatternRange,
+  getSorteosByDate,
 } from '../services/api';
 import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
@@ -33,6 +34,8 @@ export default function PatronesPage() {
   const [redundancyData, setRedundancyData] = useState<PatronRedundancy[]>([]);
   const [tickets, setTickets] = useState<any[]>([]);
   const [generatedTickets, setGeneratedTickets] = useState<any[]>([]);
+  const [Sorteos, setSorteos] = useState<any[]>([]);
+  const [generatedSorteos, setGeneratedSorteos] = useState<any[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
   const isAdmin = localStorage.getItem('role') === '0';
 
@@ -63,28 +66,28 @@ export default function PatronesPage() {
     try {
       const generatorTickets = await getTicketsByDate(pattern.date, pattern.jornada);
       setTickets(generatorTickets);
-
-      // Load generated tickets
       let generatedDate = pattern.date;
       let generatedJornada = pattern.jornada;
-
       if (pattern.jornada.toLowerCase() === 'dia') {
-        // If pattern is day, get night tickets of same day
         generatedJornada = 'noche';
       } else {
-        // If pattern is night, get day tickets of next day
         generatedDate = format(addDays(new Date(pattern.date), 1), 'yyyy-MM-dd');
         generatedJornada = 'dia';
       }
-
       const generatedTicketsData = await getTicketsByDate(generatedDate, generatedJornada);
       setGeneratedTickets(generatedTicketsData);
+      const generatorSorteos = await getSorteosByDate(pattern.date);
+      setSorteos(generatorSorteos);
+      const generateDate = format(addDays(new Date(pattern.date), 1), 'yyyy-MM-dd');
+      const generatedSorteosData = await getSorteosByDate(generateDate);
+      setGeneratedSorteos(generatedSorteosData);
     } catch (error) {
       toast.error('Error al cargar Chances');
     } finally {
       setIsLoadingTickets(false);
     }
   };
+  
 
   const handleSearch = async (date = searchDate, jornada = searchJornada) => {
     setIsLoading(true);
@@ -275,6 +278,8 @@ export default function PatronesPage() {
             tickets={tickets}
             generatedTickets={generatedTickets}
             isLoadingTickets={isLoadingTickets}
+            sorteos={Sorteos}
+            generatedSorteos={generatedSorteos}
           />
         )}
       </div>
