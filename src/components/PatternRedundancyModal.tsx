@@ -109,7 +109,7 @@ export default function PatternRedundancyModal({
               
               {/* Tickets with 4 coincidences */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Tickets con 4 Coincidencias</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-3">Chances con 4 Coincidencias</h3>
                 {data.ticketsCon4Coincidencias.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -130,13 +130,13 @@ export default function PatternRedundancyModal({
                     </table>
                   </div>
                 ) : (
-                  <p className="text-gray-500 italic">No se encontraron tickets con 4 coincidencias</p>
+                  <p className="text-gray-500 italic">No se encontraron Chances con 4 coincidencias</p>
                 )}
               </div>
               
               {/* Tickets with 3 coincidences */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Tickets con 3 Coincidencias</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-3">Chances con 3 Coincidencias</h3>
                 {data.ticketsCon3Coincidencias.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -157,7 +157,7 @@ export default function PatternRedundancyModal({
                     </table>
                   </div>
                 ) : (
-                  <p className="text-gray-500 italic">No se encontraron tickets con 3 coincidencias</p>
+                  <p className="text-gray-500 italic">No se encontraron Chances con 3 coincidencias</p>
                 )}
               </div>
             </div>
