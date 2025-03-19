@@ -584,7 +584,7 @@ export default function PatternDisplay({
                           {data.patron.patronNumbers.map((num, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100"
                             >{num}</span>
                           ))}
                         </div>
@@ -594,7 +594,7 @@ export default function PatternDisplay({
                           {data.redundancyNumbers.map((num, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100"
                             >{num}</span>
                           ))}
                         </div>
