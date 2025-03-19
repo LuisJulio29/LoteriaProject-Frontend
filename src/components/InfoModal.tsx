@@ -178,8 +178,8 @@ const InfoModal: React.FC = () => {
             <div>
               <h4 className="font-semibold">De Lunes a Viernes</h4>
               <ul className="pl-5 list-disc">
-                <li>Día = 15 Chances</li>
-                <li>Noche = 9 Chances</li>
+                <li>Día = 15 Chances, ultimo juego <span className='font-bold'>Antioqueñita Tarde - 4 PM</span></li>
+                <li>Noche = 9 Chances , ultimo juego <span className='font-bold'>Astro Luna - 10:52PM</span></li>
               </ul>
             </div>
             <div>
