@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { format, addDays } from 'date-fns';
-import { Plus, Search } from 'lucide-react';
+import { ExternalLink, Plus, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   searchPatterns,
@@ -126,6 +126,11 @@ export default function PatronesPage() {
       setSearchResults([]);
     }
   };
+    const handleRedundancyClick = (pattern: Pattern) => {
+      // Open in a new tab with the pattern's date and jornada
+      const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
+      window.open(url, '_blank');
+    };
 
   const handleCalculate = async () => {
     if (!isAdmin) {
@@ -208,41 +213,42 @@ export default function PatronesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold">Patrones</h1>
         {isAdmin && (
-          <div className="flex gap-2">
-             <button
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button
               onClick={() => setShowSearchForm(true)}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              className="flex items-center gap-1 text-sm sm:text-base bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3 w-3 sm:h-4 sm:w-4" />
               Buscar
             </button>
             <button
               onClick={() => setShowRangeForm(true)}
-              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+              className="flex items-center gap-1 text-sm sm:text-base bg-purple-600 text-white px-3 py-1.5 rounded-md hover:bg-purple-700"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
               Calcular Rango
             </button>
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              className="flex items-center gap-1 text-sm sm:text-base bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
               Añadir Patron
             </button>
           </div>
         )}
       </div>
+  
       {showSearchResults && searchResults.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-3 sm:p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Resultados de la Búsqueda</h2>
+            <h2 className="text-base sm:text-lg font-semibold">Resultados de la Búsqueda</h2>
             <button
               onClick={() => setShowSearchResults(false)}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="text-xs sm:text-sm bg-red-500 text-white px-2 py-1 sm:px-4 sm:py-2 rounded-md hover:bg-red-700"
             >
               Cerrar
             </button>
@@ -251,16 +257,16 @@ export default function PatronesPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Jornada
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Números del Patrón
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Números
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
@@ -268,33 +274,34 @@ export default function PatronesPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {searchResults.map((pattern, index) => (
                   <tr key={index}>
-                     <td className="px-6 py-4 whitespace-nowrap">
-                     {new Date(pattern.date).toLocaleDateString('es-ES', {
-                            weekday: 'long',
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                          })}
-                        </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm">
+                      {new Date(pattern.date).toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })}
+                    </td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">{pattern.jornada}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-4">
+                      <div className="flex whitespaces-nowrap gap-1">
                         {pattern.patronNumbers.map((num, idx) => (
-                          <span
+                          <span 
                             key={idx}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                            className="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
                           >
                             {num}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-6 py-2 sm:py-4 text-center"> 
                       <button
-                        onClick={() =>{}}
-                        className="text-indigo-600 hover:text-indigo-900 font-medium"
+                        onClick={() => handleRedundancyClick(pattern)}
+                        className="text-indigo-600 hover:text-indigo-900"
+                        title="Ver detalles del patrón"
                       >
-                        Ver Patrón
+                        <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />
                       </button>
                     </td>
                   </tr>
@@ -304,25 +311,25 @@ export default function PatronesPage() {
           </div>
         </div>
       )}
-
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+  
+      <div className="bg-white rounded-lg shadow p-3 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Fecha</label>
             <input
               type="date"
               value={searchDate}
               onChange={(e) => setSearchDate(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md"
+              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 border rounded-md text-sm"
               disabled={isLoading}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Jornada</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Jornada</label>
             <select
               value={searchJornada}
               onChange={(e) => setSearchJornada(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md"
+              className="w-full px-3 py-1.5 sm:px-4 sm:py-2 border rounded-md text-sm"
               disabled={isLoading}>
               <option value="dia">Día</option>
               <option value="noche">Noche</option>
@@ -332,37 +339,39 @@ export default function PatronesPage() {
             <button
               onClick={() => handleSearch()}
               disabled={isLoading}
-              className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+              className="flex items-center justify-center gap-1 sm:gap-2 bg-indigo-600 text-white px-3 py-1.5 sm:px-6 sm:py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed w-full text-sm"
             >
               {isLoading ? (
                 <>
-                  <Spinner className="h-4 w-4" />
-                  Buscando...
+                  <Spinner className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden xs:inline">Buscando...</span>
+                  <span className="xs:hidden">Buscando</span>
                 </>
               ) : (
                 <>
-                  <Search className="h-4 w-4" />
-                  Buscar Patron
+                  <Search className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden xs:inline">Buscar Patron</span>
+                  <span className="xs:hidden">Buscar</span>
                 </>
               )}
             </button>
           </div>
         </div>
-
+  
         {!pattern && !isLoading && (
-          <div className="text-center py-8">
-            <p className="text-gray-600 mb-4">No se encontraron Patrones para esos Criterios</p>
+          <div className="text-center py-4 sm:py-8">
+            <p className="text-gray-600 mb-3 sm:mb-4 text-sm">No se encontraron Patrones para esos Criterios</p>
             {isAdmin && (
               <button
                 onClick={handleCalculate}
-                className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700"
+                className="bg-indigo-600 text-white px-4 py-1.5 sm:px-6 sm:py-2 rounded-md hover:bg-indigo-700 text-sm"
               >
                 Generar Patron
               </button>
             )}
           </div>
         )}
-
+  
         {pattern && (
           <PatternDisplay
             pattern={pattern}
@@ -378,7 +387,7 @@ export default function PatronesPage() {
           />
         )}
       </div>
-
+  
       {(showForm || editingPattern) && isAdmin && (
         <PatternForm
           onSubmit={editingPattern ? handleUpdate : handleCreate}
@@ -389,14 +398,14 @@ export default function PatronesPage() {
           }}
         />
       )}
-
+  
       {showRangeForm && isAdmin && (
         <PatternRangeForm
           onSubmit={handleCalculateRange}
           onCancel={() => setShowRangeForm(false)}
         />
       )}
-        {showSearchForm && (
+      {showSearchForm && (
         <PatternSearchForm
           onSubmit={handleSearchByNumbers}
           onCancel={() => setShowSearchForm(false)}
