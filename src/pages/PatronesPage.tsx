@@ -14,10 +14,12 @@ import {
   getTicketsByDate,
   calculatePatternRange,
   getSorteosByDate,
+  searchPatternsByNumbers,
 } from '../services/api';
 import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
 import PatternRangeForm from '../components/PatternRangeForm';
+import PatternSearchForm from '../components/PatternSearchForm';
 import PatternDisplay from '../components/PatternDisplay';
 import Spinner from '../components/Spinner';
 import { useSearchParams } from 'react-router-dom';
@@ -29,6 +31,7 @@ export default function PatronesPage() {
   const [pattern, setPattern] = useState<Pattern | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [showRangeForm, setShowRangeForm] = useState(false);
+  const [showSearchForm, setShowSearchForm] = useState(false);
   const [editingPattern, setEditingPattern] = useState<Pattern | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [redundancyData, setRedundancyData] = useState<PatronRedundancy[]>([]);
@@ -37,6 +40,8 @@ export default function PatronesPage() {
   const [Sorteos, setSorteos] = useState<any[]>([]);
   const [generatedSorteos, setGeneratedSorteos] = useState<any[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
+  const [searchResults, setSearchResults] = useState<Pattern[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const isAdmin = localStorage.getItem('role') === '0';
 
   // Effect to handle URL parameters
@@ -104,6 +109,21 @@ export default function PatronesPage() {
       setGeneratedTickets([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSearchByNumbers = async (numbers: number[]) => {
+    try {
+      const results = await searchPatternsByNumbers(numbers);
+      setSearchResults(results);
+      setShowSearchResults(true);
+      setShowSearchForm(false);
+      if (results.length === 0) {
+        toast.error('No se encontraron patrones que coincidan');
+      }
+    } catch (error) {
+      toast.error('Error al buscar patrones');
+      setSearchResults([]);
     }
   };
 
@@ -192,6 +212,13 @@ export default function PatronesPage() {
         <h1 className="text-2xl font-bold">Patrones</h1>
         {isAdmin && (
           <div className="flex gap-2">
+             <button
+              onClick={() => setShowSearchForm(true)}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            >
+              <Search className="h-4 w-4" />
+              Buscar
+            </button>
             <button
               onClick={() => setShowRangeForm(true)}
               className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
@@ -209,6 +236,74 @@ export default function PatronesPage() {
           </div>
         )}
       </div>
+      {showSearchResults && searchResults.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Resultados de la Búsqueda</h2>
+            <button
+              onClick={() => setShowSearchResults(false)}
+              className="text-sm text-gray-600 hover:text-gray-900"
+            >
+              Cerrar
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Jornada
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Números del Patrón
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {searchResults.map((pattern, index) => (
+                  <tr key={index}>
+                     <td className="px-6 py-4 whitespace-nowrap">
+                     {new Date(pattern.date).toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                        </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {pattern.patronNumbers.map((num, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() =>{}}
+                        className="text-indigo-600 hover:text-indigo-900 font-medium"
+                      >
+                        Ver Patrón
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -299,6 +394,12 @@ export default function PatronesPage() {
         <PatternRangeForm
           onSubmit={handleCalculateRange}
           onCancel={() => setShowRangeForm(false)}
+        />
+      )}
+        {showSearchForm && (
+        <PatternSearchForm
+          onSubmit={handleSearchByNumbers}
+          onCancel={() => setShowSearchForm(false)}
         />
       )}
     </div>
