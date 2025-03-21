@@ -202,7 +202,7 @@ export default function TicketList() {
   <button
     onClick={handleReload}
     disabled={isReloading || isSearching}
-    className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[60px] justify-center"
+    className="flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed min-w-[40px] justify-center"
   >
     {isReloading ? (
       <>
@@ -222,14 +222,14 @@ export default function TicketList() {
       value={searchNumber}
       onChange={(e) => setSearchNumber(e.target.value)}
       placeholder="Buscar por Numero..."
-      className="w-full px-4 py-2 border rounded-md min-w-[160px]"
+      className="w-full px-4 py-2 border rounded-md min-w-[190px]"
       disabled={isSearching}
     />
   </div>
   <button
     onClick={handleSearch}
     disabled={isSearching}
-    className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[60px] justify-center"
+    className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[40px] justify-center"
   >
     {isSearching ? (
       <>
