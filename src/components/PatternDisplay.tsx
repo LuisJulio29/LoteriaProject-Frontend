@@ -289,61 +289,47 @@ export default function PatternDisplay({
           </div>
 
           {/* Pagination Controls */}
-          <div className="px-3 sm:px-6 py-4 flex items-center justify-between border-t border-gray-200 mt-4">
-            <div className="flex-1 flex justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-700">
-                  <span className="font-medium">{startIndex + 1}</span>{' '}
-                  hasta{' '}
-                  <span className="font-medium">
-                    {Math.min(endIndex, redundancyData.length)}
-                  </span>{' '}
-                  de{' '}
-                  <span className="font-medium">{redundancyData.length}</span>{' '}
-                  resultados
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleConcurrencyPageChange(currentConcurrencyPage - 1)}
-                  disabled={currentConcurrencyPage === 1}
-                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Anterior
-                </button>
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: totalConcurrencyPages }, (_, i) => i + 1)
-                    .filter(page => {
-                      return (
-                        page === 1 ||
-                        page === totalConcurrencyPages ||
-                        Math.abs(page - currentConcurrencyPage) <= 1
-                      );
-                    })
-                    .map((page, index, array) => {
-                      if (index > 0 && page - array[index - 1] > 1) {
-                        return (
-                          <React.Fragment key={`ellipsis-${page}`}>
-                            <span className="px-3 py-1 text-gray-500">...</span>
-                            <button
-                              onClick={() => handleConcurrencyPageChange(page)}
-                              className={`px-3 py-1 rounded-md ${
-                                currentConcurrencyPage === page
-                                  ? 'bg-indigo-600 text-white'
-                                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          </React.Fragment>
-                        );
-                      }
-                      return (
+          <div className="px-2 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-200 mt-3 sm:mt-4 gap-2">
+          <div className="text-xs sm:text-sm text-gray-700">
+            <span className="font-medium">{startIndex + 1}</span>{' '}
+            hasta{' '}
+            <span className="font-medium">
+              {Math.min(endIndex, redundancyData.length)}
+            </span>{' '}
+            de{' '}
+            <span className="font-medium">{redundancyData.length}</span>{' '}
+            resultados
+          </div>
+          <div className="flex gap-1 sm:gap-2 justify-center">
+            <button
+              onClick={() => handleConcurrencyPageChange(currentConcurrencyPage - 1)}
+              disabled={currentConcurrencyPage === 1}
+              className="flex items-center justify-center p-1.5 sm:px-3 sm:py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Página anterior"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Anterior</span>
+            </button>
+            
+            <div className="flex items-center gap-1 sm:gap-2 overflow-hidden">
+              {Array.from({ length: totalConcurrencyPages }, (_, i) => i + 1)
+                .filter(page => {
+                  // En móvil, solo mostrar el actual y 1 a cada lado
+                  const isMobile = window.innerWidth < 640;
+                  return (
+                    page === 1 ||
+                    page === totalConcurrencyPages ||
+                    Math.abs(page - currentConcurrencyPage) <= (isMobile ? 0 : 1)
+                  );
+                })
+                .map((page, index, array) => {
+                  if (index > 0 && page - array[index - 1] > 1) {
+                    return (
+                      <React.Fragment key={`ellipsis-${page}`}>
+                        <span className="px-1.5 sm:px-3 py-1 text-gray-500 text-xs sm:text-sm">...</span>
                         <button
-                          key={page}
                           onClick={() => handleConcurrencyPageChange(page)}
-                          className={`px-3 py-1 rounded-md ${
+                          className={`w-6 h-6 sm:w-8 sm:h-8 sm:px-3 sm:py-1 flex items-center justify-center rounded-md text-xs sm:text-sm ${
                             currentConcurrencyPage === page
                               ? 'bg-indigo-600 text-white'
                               : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -351,69 +337,85 @@ export default function PatternDisplay({
                         >
                           {page}
                         </button>
-                      );
-                    })}
-                </div>
-                <button
-                  onClick={() => handleConcurrencyPageChange(currentConcurrencyPage + 1)}
-                  disabled={currentConcurrencyPage === totalConcurrencyPages}
-                  className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Siguiente
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+                      </React.Fragment>
+                    );
+                  }
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handleConcurrencyPageChange(page)}
+                      className={`w-6 h-6 sm:w-8 sm:h-8 sm:px-3 sm:py-1 flex items-center justify-center rounded-md text-xs sm:text-sm ${
+                        currentConcurrencyPage === page
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
             </div>
+            
+            <button
+              onClick={() => handleConcurrencyPageChange(currentConcurrencyPage + 1)}
+              disabled={currentConcurrencyPage === totalConcurrencyPages}
+              className="flex items-center justify-center p-1.5 sm:px-3 sm:py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Página siguiente"
+            >
+              <span className="hidden sm:inline mr-1">Siguiente</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* Tabs and Content */}
-      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-        <div className="mb-6 overflow-x-auto">
-          <div className="flex gap-2 sm:gap-4 border-b border-gray-200 min-w-max">
-            <button
-              onClick={() => setActiveTab('generators')}
-              className={`px-2 sm:px-4 py-2 font-medium text-sm ${
-                activeTab === 'generators'
-                  ? 'border-b-2 border-indigo-500 text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Generadores
-            </button>
-            <button
-              onClick={() => setActiveTab('generated')}
-              className={`px-2 sm:px-4 py-2 font-medium text-sm ${
-                activeTab === 'generated'
-                  ? 'border-b-2 border-indigo-500 text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Generados
-            </button>
-            <button
-              onClick={() => setActiveTab('redundancy')}
-              className={`px-2 sm:px-4 py-2 font-medium text-sm ${
-                activeTab === 'redundancy'
-                  ? 'border-b-2 border-indigo-500 text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Redundancia
-            </button>
-            <button
-              onClick={() => setActiveTab('void')}
-              className={`px-2 sm:px-4 py-2 font-medium text-sm ${
-                activeTab === 'void'
-                  ? 'border-b-2 border-indigo-500 text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Patrones 0
-            </button>
-          </div>
+      <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
+      <div className="mb-4 sm:mb-6 overflow-x-auto">
+        <div className="flex gap-1 sm:gap-4 border-b border-gray-200 min-w-max">
+          <button
+            onClick={() => setActiveTab('generators')}
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm ${
+              activeTab === 'generators'
+                ? 'border-b-2 border-indigo-500 text-indigo-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Generadores
+          </button>
+          <button
+            onClick={() => setActiveTab('generated')}
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm ${
+              activeTab === 'generated'
+                ? 'border-b-2 border-indigo-500 text-indigo-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Generados
+          </button>
+          <button
+            onClick={() => setActiveTab('redundancy')}
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm ${
+              activeTab === 'redundancy'
+                ? 'border-b-2 border-indigo-500 text-indigo-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Redundancia
+          </button>
+          <button
+            onClick={() => setActiveTab('void')}
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm ${
+              activeTab === 'void'
+                ? 'border-b-2 border-indigo-500 text-indigo-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Patrones 0
+          </button>
         </div>
+      </div>
 
         {(activeTab === 'generators' || activeTab === 'generated') && (
         isLoadingTickets ? (
@@ -523,7 +525,7 @@ export default function PatternDisplay({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex whitespace-nowrap gap-1">
                           {pattern.patronNumbers.map((num, idx) => (
                             <span
                               key={idx}
