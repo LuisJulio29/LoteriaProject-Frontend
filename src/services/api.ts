@@ -135,6 +135,16 @@ export const deleteSorteo = async (id: number) => {
 };
 
 // Pattern endpoints
+export const searchPatternsByNumbers = async (numbers: number[]): Promise<Pattern[]> => {
+  try {
+    const response = await api.post('/Patrons/GetPatronByNumbers', numbers);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching patterns by numbers:', error);
+    throw error;
+  }
+};
+
 export const searchPatterns = async (date: string, jornada: string): Promise<Pattern> => {
   try {
     const response = await api.get('/patrons/Search', {
