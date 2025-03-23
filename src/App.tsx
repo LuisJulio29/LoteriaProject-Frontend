@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
 import LoginForm from './components/LoginForm';
@@ -14,12 +14,23 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return token ? <>{children}</> : <Navigate to="/" />;
 }
 
+function LoginRedirect() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  useEffect(() => {
+    if (token) {
+      navigate('/tickets');
+    }
+  }, [token, navigate]);
+  return <LoginForm />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<LoginForm />} />
+        <Route path="/" element={<LoginRedirect />} />
         <Route
           path="/tickets"
           element={
