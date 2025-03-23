@@ -99,7 +99,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ isMobile = false, onItemClick = () 
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     // Redirigir al login o a la página principal
-    navigate('/login');
+    navigate('/');
     toast.success('Sesión cerrada correctamente');
     onItemClick();
   };
