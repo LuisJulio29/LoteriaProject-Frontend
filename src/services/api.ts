@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy, PatronForVoid } from '../types';
+
+export const baseURL = 'http://ProjectCataleya.somee.com/api';
+
 const api = axios.create({
-  baseURL: 'https://localhost:7267/api',
+  baseURL: baseURL,
 });
 
 api.interceptors.request.use((config) => {

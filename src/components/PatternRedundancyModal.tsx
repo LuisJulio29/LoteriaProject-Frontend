@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Pattern, Ticket } from '../types';
 import Spinner from './Spinner';
 import { X } from 'lucide-react';
+import { baseURL } from '../services/api';
 
 interface PatternRedundancyModalProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export default function PatternRedundancyModal({
       setError(null);
       
       try {
-        const response = await fetch(`https://localhost:7267/api/Patrons/AnalyzePatternRedundancy?patron1Id=${patron1Id}&patron2Id=${patron2Id}`);
+        const response = await fetch(`${baseURL}/Patrons/AnalyzePatternRedundancy?patron1Id=${patron1Id}&patron2Id=${patron2Id}`);
         
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);

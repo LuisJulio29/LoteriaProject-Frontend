@@ -280,137 +280,140 @@ export default function TicketList() {
           </div>
         ) : (
           <>
-            <table className="min-w-full divide-y divide-gray-200 table-auto">
-              <thead className="bg-indigo-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                    Numero
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                    Serie
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                    Loteria
-                  </th>
-                  {isAdmin && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
-                      Acciones
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentSorteos.map((sorteo) => (
-                  <tr key={sorteo.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{sorteo.number}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{sorteo.serie}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {format(new Date(sorteo.date), 'dd/MM/yyyy EEEE',{ locale: es })}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{sorteo.loteria}</td>
-                    {isAdmin && (
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => setEditingSorteo(sorteo)}
-                            className="text-indigo-600 hover:text-indigo-900"
-                            disabled={isLoading}
-                          >
-                            <Pencil className="h-5 w-5" />
-                          </button>
-                          <DeleteConfirmationModal 
-                            onDelete={() => handleDelete(sorteo.id)}
-                            isLoading={isLoading}
-                            itemType="Chance"
-                          />
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-indigo-50">
+                    <tr>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                        Numero
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                        Serie
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                        Fecha
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                        Loteria
+                      </th>
+                      {isAdmin && (
+                        <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-950 uppercase tracking-wider">
+                          Acciones
+                        </th>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {currentSorteos.map((sorteo) => (
+                      <tr key={sorteo.id}>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">{sorteo.number}</td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">{sorteo.serie}</td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                          {format(new Date(sorteo.date), 'dd/MM/yyyy EEEE',{ locale: es })}
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">{sorteo.loteria}</td>
+                        {isAdmin && (
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => setEditingSorteo(sorteo)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                                disabled={isLoading}
+                              >
+                                <Pencil className="h-5 w-5" />
+                              </button>
+                              <DeleteConfirmationModal 
+                                onDelete={() => handleDelete(sorteo.id)}
+                                isLoading={isLoading}
+                                itemType="Chance"
+                              />
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
             {/* Pagination */}
-            <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <div className="flex-1 flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    <span className="font-medium">{startIndex + 1}</span>{' '}
-                    hasta{' '}
-                    <span className="font-medium">
-                      {Math.min(endIndex, filteredSorteos.length)}
-                    </span>{' '}
-                    de{' '}
-                    <span className="font-medium">{filteredSorteos.length}</span>{' '}
-                    resultados
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Anterior
-                  </button>
-                  <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter(page => {
-                        // Show first page, last page, current page, and pages around current page
+            <div className="px-2 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-200 mt-3 sm:mt-4 gap-2">
+              <div className="text-xs sm:text-sm text-gray-700">
+                <span className="font-medium">{startIndex + 1}</span> (
+                hasta (
+                <span className="font-medium">
+                  {Math.min(endIndex, filteredSorteos.length)}
+                </span> (
+                de (
+                <span className="font-medium">{filteredSorteos.length}</span> (
+                resultados
+              </div>
+              <div className="flex gap-1 sm:gap-2 justify-center">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center justify-center p-1.5 sm:px-3 sm:py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Anterior</span>
+                </button>
+                
+                <div className="flex items-center gap-1 sm:gap-2 overflow-hidden">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(page => {
+                      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+                      return (
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= (isMobile ? 1 : 4)
+                      );
+                    })
+                    .map((page, index, array) => {
+                      if (index > 0 && page - array[index - 1] > 1) {
                         return (
-                          page === 1 ||
-                          page === totalPages ||
-                          Math.abs(page - currentPage) <= 1
+                          <React.Fragment key={`ellipsis-${page}`}>
+                            <span className="px-1.5 sm:px-3 py-1 text-gray-500 text-xs sm:text-sm">...</span>
+                            <button
+                              onClick={() => handlePageChange(page)}
+                              className={`w-6 h-6 sm:w-8 sm:h-8 sm:px-3 sm:py-1 flex items-center justify-center rounded-md text-xs sm:text-sm ${
+                                currentPage === page
+                                  ? 'bg-indigo-600 text-white'
+                                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
                         );
-                      })
-                      .map((page, index, array) => {
-                        // Add ellipsis between non-consecutive pages
-                        if (index > 0 && page - array[index - 1] > 1) {
-                          return (
-                            <React.Fragment key={`ellipsis-${page}`}>
-                              <span className="px-3 py-1 text-gray-500">...</span>
-                              <button
-                                onClick={() => handlePageChange(page)}
-                                className={`px-3 py-1 rounded-md ${
-                                  currentPage === page
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
-                              >
-                                {page}
-                              </button>
-                            </React.Fragment>
-                          );
-                        }
-                        return (
-                          <button
-                            key={page}
-                            onClick={() => handlePageChange(page)}
-                            className={`px-3 py-1 rounded-md ${
-                              currentPage === page
-                                ? 'bg-indigo-600 text-white'
-                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        );
-                      })}
-                  </div>
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-1 px-3 py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Siguiente
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
+                      }
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`w-6 h-6 sm:w-8 sm:h-8 sm:px-3 sm:py-1 flex items-center justify-center rounded-md text-xs sm:text-sm ${
+                            currentPage === page
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
                 </div>
+                
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center justify-center p-1.5 sm:px-3 sm:py-1 rounded-md bg-white border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Página siguiente"
+                >
+                  <span className="hidden sm:inline mr-1">Siguiente</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </>
