@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy, PatronForVoid } from '../types';
 
-export const baseURL = 'http://projectcataleya.runasp.net/api';
+export const baseURL = 'https://projectcataleya.runasp.net/api';
 
 const api = axios.create({
   baseURL: baseURL,
