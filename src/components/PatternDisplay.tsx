@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy, PatronForVoid } from '../types';
-import { Pencil, ExternalLink, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
+import { Pencil, ExternalLink, ChevronLeft, ChevronRight, BarChart2, Share2 } from 'lucide-react';
 import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import React from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PatternRedundancyModal from './PatternRedundancyModal';
+import { frontendURL } from '../services/api';
 
 interface PatternDisplayProps {
   pattern: Pattern;
@@ -130,6 +131,26 @@ export default function PatternDisplay({
     setIsRedundancyModalOpen(true);
   };
 
+  const handleRedundancyTabAnalysisClick = (selectedRedundantPattern: Pattern) => {
+    setSelectedPatterns({
+      patron1Id: selectedRedundantPattern.id,
+      patron2Id: pattern.id,
+    });
+    setIsRedundancyModalOpen(true);
+  };
+
+  const handleShareClick = () => {
+    const url = `${frontendURL}/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        toast.success('Enlace copiado al portapapeles');
+      })
+      .catch(err => {
+        console.error('Error al copiar el enlace: ', err);
+        toast.error('Error al copiar el enlace');
+      });
+  };
+
   return (
     <div className="space-y-6">
       {/* Pattern Results Chart */}
@@ -151,6 +172,13 @@ export default function PatternDisplay({
           </div>
           {showActions && isAdmin && (
             <div className="flex space-x-2 mt-2 sm:mt-0">
+              <button
+                onClick={handleShareClick}
+                className="text-blue-600 hover:text-blue-900"
+                title="Compartir patrón"
+              >
+                <Share2 className="h-5 w-5" />
+              </button>
               <button
                 onClick={onEdit}
                 className="text-indigo-600 hover:text-indigo-900"
@@ -515,18 +543,21 @@ export default function PatternDisplay({
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Numeros del Patron
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {redundancyInDate.map((pattern, index) => (
+                  {redundancyInDate.map((redundantPatternItem, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {new Date(pattern.date).toLocaleDateString()}
+                        {new Date(redundantPatternItem.date).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{pattern.jornada}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{redundantPatternItem.jornada}</td>
                       <td className="px-6 py-4">
                         <div className="flex whitespace-nowrap gap-1">
-                          {pattern.patronNumbers.map((num, idx) => (
+                          {redundantPatternItem.patronNumbers.map((num, idx) => (
                             <span
                               key={idx}
                               className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
@@ -534,6 +565,24 @@ export default function PatternDisplay({
                               {num}
                             </span>
                           ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => handleRedundancyClick(redundantPatternItem)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            title="Ver detalles del patrón"
+                          >
+                            <ExternalLink className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={() => handleRedundancyTabAnalysisClick(redundantPatternItem)}
+                            className="text-emerald-600 hover:text-emerald-900"
+                            title="Analizar redundancia"
+                          >
+                            <BarChart2 className="h-5 w-5" />
+                          </button>
                         </div>
                       </td>
                     </tr>

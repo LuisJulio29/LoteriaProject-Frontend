@@ -274,12 +274,12 @@ export default function TicketList() {
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {isLoading ? (
-          <div className="flex items-center justify-center p-8">
+          <div className="flex justify-center items-center py-8">
             <Spinner className="h-8 w-8 text-indigo-600" />
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
               <div className="inline-block min-w-full align-middle">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-indigo-50">
@@ -340,14 +340,11 @@ export default function TicketList() {
             {/* Pagination */}
             <div className="px-2 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-200 mt-3 sm:mt-4 gap-2">
               <div className="text-xs sm:text-sm text-gray-700">
-                <span className="font-medium">{startIndex + 1}</span> (
-                hasta (
+                <span className="font-medium">{startIndex + 1}</span> hasta{' '}
                 <span className="font-medium">
                   {Math.min(endIndex, filteredTickets.length)}
-                </span> (
-                de (
-                <span className="font-medium">{filteredTickets.length}</span> (
-                resultados
+                </span>{' '}de{' '}
+                <span className="font-medium">{filteredTickets.length}</span> resultados
               </div>
               <div className="flex gap-1 sm:gap-2 justify-center">
                 <button

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { AstroPatron, PatronRedundancy, Pattern, Ticket,Sorteo, SorteoPattern,SorteoPatronRedundancy, PatronForVoid } from '../types';
 
 export const baseURL = 'https://projectcataleya.runasp.net/api';
+export const frontendURL = 'https://proyectocataleya.netlify.app';
 
 const api = axios.create({
   baseURL: baseURL,
