@@ -39,7 +39,8 @@ export default function PatternRedundancyModal({
         const response = await fetch(`${baseURL}/Patrons/AnalyzePatternRedundancy?patron1Id=${patron1Id}&patron2Id=${patron2Id}`);
         
         if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
+          const errorText = await response.text();
+          throw new Error(errorText || `Error ${response.status}: ${response.statusText}`);
         }
         
         const result = await response.json();

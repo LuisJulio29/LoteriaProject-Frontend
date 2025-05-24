@@ -101,8 +101,12 @@ export default function PatronesPage() {
       setPattern(result);
       await loadRedundancyData(result);
       await loadTickets(result);
-    } catch (error) {
-      toast.error('No se encuentran Patrones');
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(typeof error.response.data === 'string' ? error.response.data : 'Error al buscar patrones');
+      } else {
+        toast.error('No se encuentran Patrones');
+      }
       setPattern(null);
       setRedundancyData([]);
       setTickets([]);
@@ -119,10 +123,14 @@ export default function PatronesPage() {
       setShowSearchResults(true);
       setShowSearchForm(false);
       if (results.length === 0) {
-        toast.error('No se encontraron patrones que coincidan');
+        toast.error('No se encontraron patrones que coincidan con los números proporcionados.');
       }
-    } catch (error) {
-      toast.error('Error al buscar patrones');
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(typeof error.response.data === 'string' ? error.response.data : 'Error al buscar patrones por números');
+      } else {
+        toast.error('Error al buscar patrones por números');
+      }
       setSearchResults([]);
     }
   };
@@ -207,7 +215,14 @@ export default function PatronesPage() {
       // Optionally refresh the current pattern if it falls within the calculated range
       handleSearch();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al calcular patrones');
+      if (error.response && error.response.data && typeof error.response.data.message === 'string') {
+        toast.error(error.response.data.message);
+      } else if (error.response && typeof error.response.data === 'string') {
+        toast.error(error.response.data);
+      }
+      else {
+        toast.error('Error al calcular patrones en rango');
+      }
     }
   };
 
