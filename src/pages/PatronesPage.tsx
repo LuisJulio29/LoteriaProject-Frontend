@@ -15,6 +15,7 @@ import {
   calculatePatternRange,
   getSorteosByDate,
   searchPatternsByNumbers,
+  searchPatternsByFDG,
 } from '../services/api';
 import { Pattern, PatronRedundancy } from '../types';
 import PatternForm from '../components/PatternForm';
@@ -23,6 +24,7 @@ import PatternSearchForm from '../components/PatternSearchForm';
 import PatternDisplay from '../components/PatternDisplay';
 import Spinner from '../components/Spinner';
 import { useSearchParams } from 'react-router-dom';
+import PatternFDGSearchForm from '../components/PatternFDGSearchForm';
 
 export default function PatronesPage() {
   const [searchParams] = useSearchParams();
@@ -42,6 +44,7 @@ export default function PatronesPage() {
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
   const [searchResults, setSearchResults] = useState<Pattern[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showFDGSearchForm, setShowFDGSearchForm] = useState(false);
   const isAdmin = localStorage.getItem('role') === '0';
 
   // Effect to handle URL parameters
@@ -134,11 +137,31 @@ export default function PatronesPage() {
       setSearchResults([]);
     }
   };
-    const handleRedundancyClick = (pattern: Pattern) => {
-      // Open in a new tab with the pattern's date and jornada
-      const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
-      window.open(url, '_blank');
-    };
+
+  const handleSearchByFDG = async (fdg: string, jornada: string) => {
+    try {
+      const results = await searchPatternsByFDG(fdg, jornada);
+      setSearchResults(results);
+      setShowSearchResults(true);
+      setShowFDGSearchForm(false);
+      if (results.length === 0) {
+        toast.error('No se encontraron patrones que coincidan con el FDG proporcionado.');
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(typeof error.response.data === 'string' ? error.response.data : 'Error al buscar patrones por FDG');
+      } else {
+        toast.error('Error al buscar patrones por FDG');
+      }
+      setSearchResults([]);
+    }
+  };
+
+  const handleRedundancyClick = (pattern: Pattern) => {
+    // Open in a new tab with the pattern's date and jornada
+    const url = `/patrones?date=${pattern.date}&jornada=${pattern.jornada}`;
+    window.open(url, '_blank');
+  };
 
   const handleCalculate = async () => {
     if (!isAdmin) {
@@ -240,18 +263,25 @@ export default function PatronesPage() {
               Buscar
             </button>
             <button
+              onClick={() => setShowFDGSearchForm(true)}
+              className="flex items-center gap-1 text-sm sm:text-base bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700"
+            >
+              <Search className="h-3 w-3 sm:h-4 sm:w-4" />
+              Fila General
+            </button>
+            <button
               onClick={() => setShowRangeForm(true)}
               className="flex items-center gap-1 text-sm sm:text-base bg-purple-600 text-white px-3 py-1.5 rounded-md hover:bg-purple-700"
             >
               <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-              Calcular Rango
+              Calcular
             </button>
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-1 text-sm sm:text-base bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700"
             >
               <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-              Añadir Patron
+              Añadir
             </button>
           </div>
         )}
@@ -424,6 +454,12 @@ export default function PatronesPage() {
         <PatternSearchForm
           onSubmit={handleSearchByNumbers}
           onCancel={() => setShowSearchForm(false)}
+        />
+      )}
+      {showFDGSearchForm && (
+        <PatternFDGSearchForm
+          onSubmit={handleSearchByFDG}
+          onCancel={() => setShowFDGSearchForm(false)}
         />
       )}
     </div>
