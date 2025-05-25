@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Pattern, PatronRedundancy, PatronForVoid } from '../types';
 import { Pencil, ExternalLink, ChevronLeft, ChevronRight, BarChart2, Share2 } from 'lucide-react';
-import { getRedundancyInDate, getNumbersNotPlayed, getVoidInDay, getTotalForColumn } from '../services/api';
+import { getRedundancyInDate, getVoidInDay, getTotalForColumn } from '../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import React from 'react';
@@ -73,11 +73,10 @@ export default function PatternDisplay({
   const loadAnalysisData = async () => {
     setIsLoadingAnalysis(true);
     try {
-      const [notPlayedData, totalData] = await Promise.all([
-        getNumbersNotPlayed(pattern.date, pattern.jornada),
+      const [totalData] = await Promise.all([
         getTotalForColumn(pattern.date, pattern.jornada)
       ]);
-      setNumbersNotPlayed(notPlayedData);
+      setNumbersNotPlayed(pattern.fdg || []);
       setColumnTotals(totalData);
     } catch (error) {
       toast.error('Error al cargar datos de análisis');
