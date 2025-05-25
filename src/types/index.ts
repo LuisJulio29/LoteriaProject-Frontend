@@ -31,6 +31,7 @@ export interface Pattern {
   date: string;
   jornada: string;
   patronNumbers: number[];
+  fdg?: string[];
 }
 
 export interface PatronForVoid {
@@ -77,4 +78,5 @@ export interface AstroPatron {
   row2: number[];
   row3: number[];
   row4: number[];
+  fdg?: string[];
 }

@@ -429,3 +429,18 @@ export const getSorteoTotalForColumn = async (date: string): Promise<number[]> =
     throw error;
   }
 }
+
+export const searchPatternsByFDG = async (fdg: string, jornada: string): Promise<Pattern[]> => {
+  try {
+    const response = await api.get('/patrons/SearchByFDG', {
+      params: {
+        fdg,
+        jornada
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching patterns by FDG:', error);
+    throw error;
+  }
+};
