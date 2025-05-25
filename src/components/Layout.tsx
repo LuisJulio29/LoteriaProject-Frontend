@@ -27,7 +27,7 @@ import InfoModal from './InfoModal'; // Importamos el componente que acabamos de
 import { Register } from '../services/api';
 
 const navigationItems = [
-  { path: '/tickets', icon: TicketIcon, label: 'Tickets' },
+  { path: '/tickets', icon: TicketIcon, label: 'Chances' },
   { path: '/loterias', icon: TicketIcon, label: 'Loterias' },
   { path: '/patrones', icon: BarChart2, label: 'Patrones' },
   { path: '/Sorteopatron', icon: BarChart2, label: 'Patron Loteria' },
