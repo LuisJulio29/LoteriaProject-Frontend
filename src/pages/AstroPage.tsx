@@ -86,43 +86,84 @@ export default function AstroPage() {
     ];
     const maxValue = Math.max(...allValues);
 
+    // Obtener los signos que no han jugado (los que tienen valor 0)
+    const signosNoJugados = [
+      'Aries', 'Tauro', 'Geminis', 'Cancer', 'Leo', 'Virgo',
+      'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'
+    ].filter((_, index) => Number(astroPatron.sign[index]) === 0);
+
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
-        <h3 className="text-lg font-semibold mb-4">Frecuencia de Numeros</h3>
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 bg-gray-50 border">Fila/Numero</th>
-              {Array.from({ length: 10 }, (_, i) => (
-                <th key={i} className="px-4 py-2 bg-gray-50 border text-center w-16">{i}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { name: 'Fila 1', data: astroPatron.row1 },
-              { name: 'Fila 2', data: astroPatron.row2 },
-              { name: 'Fila 3', data: astroPatron.row3 },
-              { name: 'Fila 4', data: astroPatron.row4 },
-            ].map((row, index) => (
-              <tr key={index}>
-                <td className="px-4 py-2 font-medium bg-gray-50 border">{row.name}</td>
-                {row.data.map((count, i) => (
-                  <td
-                    key={i}
-                    className="px-4 py-2 text-center border transition-colors duration-200"
-                    style={{
-                      backgroundColor: getColorIntensity(count, maxValue),
-                    }}
-                  >
-                    {count}
-                  </td>
+      <>
+        <div className="bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
+          <h3 className="text-lg font-semibold mb-4">Frecuencia de Numeros</h3>
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 bg-gray-50 border">Fila/Numero</th>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <th key={i} className="px-4 py-2 bg-gray-50 border text-center w-16">{i}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {[
+                { name: 'Fila 1', data: astroPatron.row1 },
+                { name: 'Fila 2', data: astroPatron.row2 },
+                { name: 'Fila 3', data: astroPatron.row3 },
+                { name: 'Fila 4', data: astroPatron.row4 },
+              ].map((row, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2 font-medium bg-gray-50 border">{row.name}</td>
+                  {row.data.map((count, i) => (
+                    <td
+                      key={i}
+                      className="px-4 py-2 text-center border transition-colors duration-200"
+                      style={{
+                        backgroundColor: getColorIntensity(count, maxValue),
+                      }}
+                    >
+                      {count}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Números No Jugados y Signos No Jugados */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Números No Jugados */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold mb-4">Números No Jugados</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+              {astroPatron.fdg?.map((number, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-50 rounded-lg p-2 sm:p-4 text-center font-mono text-base sm:text-lg"
+                >
+                  {number}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Signos No Jugados */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold mb-4">Signos No Jugados</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+              {signosNoJugados.map((sign, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-50 rounded-lg p-2 sm:p-4 text-center font-medium text-base sm:text-lg"
+                >
+                  {sign}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
     );
   };
 
@@ -224,50 +265,49 @@ export default function AstroPage() {
           </div>
         )}
 
-        {tickets.length > 0 && (
-          <div className="mt-6 bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
-            <h3 className="text-lg font-semibold mb-4">Chances</h3>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Numero
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Signo
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Loteria
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Jornada
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {tickets.map((ticket, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{ticket.sign}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {format(new Date(ticket.date), 'dd/MM/yyyy')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
         {astroPatron && (
           <>
             {renderFrequencyTable()}
             {renderZodiacChart()}
+            {tickets.length > 0 && (
+              <div className="mt-6 bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
+                <h3 className="text-lg font-semibold mb-4">Chances</h3>
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Numero
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Signo
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Fecha
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Loteria
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jornada
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {tickets.map((ticket, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap">{ticket.number}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{ticket.sign}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {format(new Date(ticket.date), 'dd/MM/yyyy')}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">{ticket.loteria}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{ticket.jornada}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             <div className="mt-6 flex justify-center">
               <button
                 onClick={handleRegenerate}
